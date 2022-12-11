@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
-using Zun.Data.Entidades;
-using Zun.Data.IUnitOfWork.Interfaces;
-using Zun.Domain.Interfaces;
+using Zun.Datos.Entidades;
+using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Dominio.Interfaces;
 
-namespace Zun.Domain.Servicios
+namespace Zun.Dominio.Servicios
 {
     public class ServicioBase<TEntidad> : IServicioBase<TEntidad> where TEntidad : EntitidadBase
     {

@@ -1,4 +1,4 @@
-﻿using Zun.Data.Entidades;
+﻿using Zun.Datos.Entidades;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,13 +6,13 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Reflection;
 using System.Text;
-using Zun.Data.DbContext;
-using Zun.Data.IUnitOfWork.Interfaces;
-using Zun.Domain.Interfaces;
-using Zun.Data.IUnitOfWork.Repositorios;
-using Zun.Domain.Servicios;
+using Zun.Datos.IUnitOfWork.Repositorios;
+using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Datos.DbContext;
+using Zun.Dominio.Interfaces;
+using Zun.Dominio.Servicios;
 
-namespace Zun.Application.IoC
+namespace Zun.Aplicacion.IoC
 {
     public static class IoCRegister
     {
@@ -39,7 +39,7 @@ namespace Zun.Application.IoC
                 {
                     Version = "v1",
                     Title = "ZUN API",
-                    Description = "API para realizar las operaciones del sistema"                   
+                    Description = "API para realizar las operaciones del sistema"
                 });
 
                 // using System.Reflection;

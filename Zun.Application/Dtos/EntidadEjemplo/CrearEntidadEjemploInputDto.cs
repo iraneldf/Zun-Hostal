@@ -1,4 +1,4 @@
-﻿namespace Zun.Application.Dtos.EntidadEjemplo
+﻿namespace Zun.Aplicacion.Dtos.EntidadEjemplo
 {
     public class CrearEntidadEjemploInputDto
     {

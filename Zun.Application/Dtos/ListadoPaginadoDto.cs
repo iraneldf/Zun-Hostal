@@ -1,4 +1,4 @@
-﻿namespace Zun.Application.Dtos
+﻿namespace Zun.Aplicacion.Dtos
 {
     public class ListadoPaginadoDto<TEntidad>
     {

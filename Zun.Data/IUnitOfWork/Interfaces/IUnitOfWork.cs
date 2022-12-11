@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zun.Data.Entidades;
+using Zun.Datos.Entidades;
 
-namespace Zun.Data.IUnitOfWork.Interfaces
+namespace Zun.Datos.IUnitOfWork.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {

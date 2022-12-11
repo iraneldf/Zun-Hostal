@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zun.Data.DbContext;
-using Zun.Data.Entidades;
-using Zun.Data.IUnitOfWork.Interfaces;
+using Zun.Datos.Entidades;
+using Zun.Datos.DbContext;
+using Zun.Datos.IUnitOfWork.Interfaces;
 
-namespace Zun.Data.IUnitOfWork.Repositorios
+namespace Zun.Datos.IUnitOfWork.Repositorios
 {
     public class UnitOfWork : Interfaces.IUnitOfWork
     {
@@ -15,7 +15,7 @@ namespace Zun.Data.IUnitOfWork.Repositorios
         {
             _context = context;
             EntidadesEjemplo = new EntidadEjemploRepositorio(context);
-        }        
+        }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

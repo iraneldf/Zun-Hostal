@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Zun.Application.Dtos.EntidadEjemplo;
-using Zun.Data.Entidades;
+using Zun.Aplicacion.Dtos.EntidadEjemplo;
+using Zun.Datos.Entidades;
 
-namespace Zun.Application.Mapper.EntidadesEjemplo
+namespace Zun.Aplicacion.Mapper.EntidadesEjemplo
 {
     public class EntidadEjemploAEntidadEjemploDto : Profile
     {

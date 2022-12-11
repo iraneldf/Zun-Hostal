@@ -1,4 +1,4 @@
-﻿namespace Zun.Data.Entidades
+﻿namespace Zun.Datos.Entidades
 {
     public class EntidadEjemplo : EntitidadBase
     {

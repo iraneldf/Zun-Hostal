@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
-using Zun.Application.Dtos;
-using Zun.Data.Entidades;
-using Zun.Domain.Interfaces;
+using Zun.Aplicacion.Dtos;
+using Zun.Datos.Entidades;
+using Zun.Dominio.Interfaces;
 
-namespace Zun.Application.Controllers
+namespace Zun.Aplicacion.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -83,7 +83,7 @@ namespace Zun.Application.Controllers
             {
                 if (id != modificarDto.Id)
                     return BadRequest("Erro na atualização");
-                
+
                 TEntidad entity = _mapper.Map<TEntidad>(modificarDto);
                 EntityEntry<TEntidad> result = _servicioBase.Modificar(entity);
                 await _servicioBase.SaveChangesAsync();
@@ -237,7 +237,7 @@ namespace Zun.Application.Controllers
         /// </summary>
         /// <param name="filtro">filtro y configuracion para el paginado</param>
         protected virtual Task<(IEnumerable<TEntidad>, int)> AplicarFiltros(FiltroListadoPaginadoDto filtro)
-        {          
+        {
             return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar);
         }
 

@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Zun.Data.Entidades
+namespace Zun.Datos.Entidades
 {
     public class EntitidadBase
     {
         [Key]
         public int Id { get; set; }
         public DateTime FechaCreacion { get; set; }
-        public string CreadoPor { get; set; } = String.Empty;
+        public string CreadoPor { get; set; } = string.Empty;
         public DateTime FechaModificacion { get; set; }
-        public string ModificadoPor { get; set; } = String.Empty;
+        public string ModificadoPor { get; set; } = string.Empty;
     }
 }

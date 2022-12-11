@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Zun.Application.Dtos
+namespace Zun.Aplicacion.Dtos
 {
     public class EntitidadBaseDto
     {

@@ -1,13 +1,11 @@
 ﻿
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
-using Zun.Application.Dtos;
-using Zun.Application.Dtos.EntidadEjemplo;
-using Zun.Data.Entidades;
-using Zun.Domain.Interfaces;
+using Zun.Aplicacion.Dtos.EntidadEjemplo;
+using Zun.Datos.Entidades;
+using Zun.Dominio.Interfaces;
 
-namespace Zun.Application.Controllers
+namespace Zun.Aplicacion.Controllers
 {
     public class EntidadEjemploController : ControladorBase<EntidadEjemplo, EntidadEjemploDto, CrearEntidadEjemploInputDto, ModificarEntidadEjemploInputDto, EntidadEjemploListadoPaginadoDto, FiltroEntidadEjemploListadoPaginadoDto>
     {

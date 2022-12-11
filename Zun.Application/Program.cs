@@ -1,6 +1,6 @@
-using Zun.Data.DbContext;
+using Zun.Datos.DbContext;
 using Microsoft.EntityFrameworkCore;
-using Zun.Application.IoC;
+using Zun.Aplicacion.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 

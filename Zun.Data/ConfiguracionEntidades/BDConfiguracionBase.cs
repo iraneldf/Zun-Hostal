@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zun.Data.Entidades;
+using Zun.Datos.Entidades;
 
-namespace Zun.Data.ConfiguracionEntidades
+namespace Zun.Datos.ConfiguracionEntidades
 {
     public class BDConfiguracionBase<TEntity> where TEntity : EntitidadBase
     {

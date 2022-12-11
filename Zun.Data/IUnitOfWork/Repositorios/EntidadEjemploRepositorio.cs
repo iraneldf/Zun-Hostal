@@ -1,8 +1,8 @@
-﻿using Zun.Data.DbContext;
-using Zun.Data.Entidades;
-using Zun.Data.IUnitOfWork.Interfaces;
+﻿using Zun.Datos.DbContext;
+using Zun.Datos.Entidades;
+using Zun.Datos.IUnitOfWork.Interfaces;
 
-namespace Zun.Data.IUnitOfWork.Repositorios
+namespace Zun.Datos.IUnitOfWork.Repositorios
 {
     public class EntidadEjemploRepositorio : RepositorioBase<EntidadEjemplo>, IEntidadEjemploRepositorio
     {

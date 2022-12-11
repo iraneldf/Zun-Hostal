@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
-using Zun.Data.Entidades;
+using Zun.Datos.Entidades;
 
-namespace Zun.Data.IUnitOfWork.Interfaces
+namespace Zun.Datos.IUnitOfWork.Interfaces
 {
     public interface IRepositorioBase<TEntidad> where TEntidad : EntitidadBase
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zun.Data.ConfiguracionEntidades;
-using Zun.Data.Entidades;
+using Zun.Datos.ConfiguracionEntidades;
+using Zun.Datos.Entidades;
 
-namespace Zun.Data.DbContext
+namespace Zun.Datos.DbContext
 {
     public class ZunDbContext : Microsoft.EntityFrameworkCore.DbContext, IZunDbContext
     {

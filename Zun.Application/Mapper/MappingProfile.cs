@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Zun.Application.Mapper.EntidadesEjemplo;
+using Zun.Aplicacion.Mapper.EntidadesEjemplo;
 
-namespace Zun.Application.Mapper
+namespace Zun.Aplicacion.Mapper
 {
     public class MappingProfile : Profile
     {

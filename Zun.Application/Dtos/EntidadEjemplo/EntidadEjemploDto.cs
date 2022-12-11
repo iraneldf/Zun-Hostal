@@ -1,6 +1,6 @@
-﻿using Zun.Application.Dtos;
+﻿using Zun.Aplicacion.Dtos;
 
-namespace Zun.Application.Dtos.EntidadEjemplo
+namespace Zun.Aplicacion.Dtos.EntidadEjemplo
 {
     public class EntidadEjemploDto : EntitidadBaseDto
     {

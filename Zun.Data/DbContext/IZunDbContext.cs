@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zun.Data.Entidades;
+using Zun.Datos.Entidades;
 
-namespace Zun.Data.DbContext
+namespace Zun.Datos.DbContext
 {
     public interface IZunDbContext
     {
