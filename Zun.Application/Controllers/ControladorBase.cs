@@ -12,7 +12,7 @@ namespace Zun.Aplicacion.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ControladorBase<TEntidad, TEntidadDto, CrearDto, ModificarDto, ElementoListadoPaginadoDto, FiltroListadoPaginadoDto> : ControllerBase where TEntidad : EntitidadBase where TEntidadDto : EntitidadBaseDto where ModificarDto : EntitidadBaseDto where FiltroListadoPaginadoDto : ConfiguracionListadoPaginadoDto
     {
         protected readonly IMapper _mapper;

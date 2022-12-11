@@ -23,13 +23,13 @@ namespace Zun.Aplicacion.Controllers
         protected override Task<(IEnumerable<EntidadEjemplo>, int)> AplicarFiltros(FiltroEntidadEjemploListadoPaginadoDto filtro)
         {
             //agregando filtros
-            Expression<Func<EntidadEjemplo, bool>>[] filters = new Expression<Func<EntidadEjemplo, bool>>[2];
+            List<Expression<Func<EntidadEjemplo, bool>>> filters = new();
             if (filtro.Edad != null)
-                filters[0] = entidadEjemplo => entidadEjemplo.Edad == filtro.Edad;
+                filters.Add(entidadEjemplo => entidadEjemplo.Edad == filtro.Edad);
             if (filtro.Nombre != null)
-                filters[1] = entidadEjemplo => entidadEjemplo.Nombre == filtro.Nombre;
+                filters.Add(entidadEjemplo => entidadEjemplo.Nombre == filtro.Nombre);
 
-            return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar, filters);
+            return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar, filters.ToArray());
         }
     }
 }

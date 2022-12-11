@@ -36,7 +36,7 @@ namespace Zun.Dominio.Servicios
             IQueryable<TEntidad> query = CreateQuery();
 
             //Filtering
-            query = filters.Aggregate(query, (current, filters) => current.Where(filters));
+                query = filters.Aggregate(query, (current, filters) => current.Where(filters));
             //Counting
             int total = await query.CountAsync();
             //Paginating

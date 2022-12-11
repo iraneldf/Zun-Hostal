@@ -11,6 +11,7 @@ using Zun.Datos.IUnitOfWork.Interfaces;
 using Zun.Datos.DbContext;
 using Zun.Dominio.Interfaces;
 using Zun.Dominio.Servicios;
+using Zun.Aplicacion.Mapper;
 
 namespace Zun.Aplicacion.IoC
 {
@@ -33,6 +34,20 @@ namespace Zun.Aplicacion.IoC
             services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
+
+            services.AddAutoMappers(AutoMapperConfiguration.CreateExpression().AddAutoMapperLeadOportunidade());
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAnyCorsPolicy", builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                });
+            });
+
+            //swagger
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -93,6 +108,7 @@ namespace Zun.Aplicacion.IoC
 
         public static IServiceCollection RegistrarServiciosDominio(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IServicioBase<>), typeof(ServicioBase<>));
             services.AddScoped<IEntidadEjemploServicio, EntidadEjemploServicio>();
 
             return services;
