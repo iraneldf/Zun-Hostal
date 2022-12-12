@@ -12,6 +12,7 @@ using Zun.Datos.DbContext;
 using Zun.Dominio.Interfaces;
 using Zun.Dominio.Servicios;
 using Zun.Aplicacion.Mapper;
+using FluentValidation.AspNetCore;
 
 namespace Zun.Aplicacion.IoC
 {
@@ -45,6 +46,12 @@ namespace Zun.Aplicacion.IoC
                     builder.AllowAnyOrigin();
                     builder.AllowAnyMethod();
                 });
+            });
+
+            //Add services to validation
+            services.AddFluentValidation(s =>
+            {
+                s.RegisterValidatorsFromAssemblyContaining<Program>();
             });
 
             //swagger

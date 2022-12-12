@@ -10,7 +10,7 @@ namespace Zun.Aplicacion.Mapper.EntidadesEjemplo
         public EntidadEjemploAEntidadEjemploListadoPaginadoDto
 ()
         {
-            CreateMap<EntidadEjemplo, EntidadEjemploListadoPaginadoDto
+            CreateMap<EntidadEjemplo, EntidadEjemploListadoPaginadoOutputDto
 >()
               .ReverseMap();
         }

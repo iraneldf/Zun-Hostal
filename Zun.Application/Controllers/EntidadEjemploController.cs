@@ -7,7 +7,7 @@ using Zun.Dominio.Interfaces;
 
 namespace Zun.Aplicacion.Controllers
 {
-    public class EntidadEjemploController : ControladorBase<EntidadEjemplo, EntidadEjemploDto, CrearEntidadEjemploInputDto, ModificarEntidadEjemploInputDto, EntidadEjemploListadoPaginadoDto, FiltroEntidadEjemploListadoPaginadoDto>
+    public class EntidadEjemploController : ControladorBase<EntidadEjemplo, EntidadEjemploDto, CrearEntidadEjemploInputDto, ModificarEntidadEjemploInputDto, EntidadEjemploListadoPaginadoOutputDto, FiltroEntidadEjemploListadoPaginadoDto>
     {
         public EntidadEjemploController(IMapper mapper, IServicioBase<EntidadEjemplo> servicioBase) : base(mapper, servicioBase)
         {

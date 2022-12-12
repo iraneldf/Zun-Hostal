@@ -10,7 +10,7 @@ namespace Zun.Datos.ConfiguracionEntidades
             #region Configurando Entidad
             BDConfiguracionBase<EntidadEjemplo>.SetEntityBuilder(modelBuilder);
 
-            modelBuilder.Entity<EntidadEjemplo>().ToTable("EntidadEjemplo"/*, t => t.ExcludeFromMigrations()*/);
+            modelBuilder.Entity<EntidadEjemplo>().ToTable("EntidadEjemplo", t => t.ExcludeFromMigrations());
 
             modelBuilder.Entity<EntidadEjemplo>().Property(e => e.Nombre)
                                                  .IsRequired()
