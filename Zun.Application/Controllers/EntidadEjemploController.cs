@@ -25,9 +25,9 @@ namespace Zun.Aplicacion.Controllers
             //agregando filtros
             List<Expression<Func<EntidadEjemplo, bool>>> filters = new();
             if (filtro.Edad != null)
-                filters.Add(entidadEjemplo => entidadEjemplo.Edad == filtro.Edad);
+                filters.Add(entidadEjemplo => entidadEjemplo.Edad.ToString().Contains(filtro.Edad.Value.ToString()));
             if (filtro.Nombre != null)
-                filters.Add(entidadEjemplo => entidadEjemplo.Nombre == filtro.Nombre);
+                filters.Add(entidadEjemplo => entidadEjemplo.Nombre.Contains(filtro.Nombre));
 
             return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar, filters.ToArray());
         }
