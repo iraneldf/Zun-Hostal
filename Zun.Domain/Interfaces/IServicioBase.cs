@@ -51,5 +51,6 @@ namespace Zun.Dominio.Interfaces
         /// </summary>
         /// <param name="id">Id del elemento</param>
         Task<EntityEntry<TEntidad>> Eliminar(int id);
+        Task CrearEntidades(List<TEntidad> entidades);
     }
 }
