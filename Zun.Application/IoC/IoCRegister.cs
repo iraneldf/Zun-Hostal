@@ -95,11 +95,23 @@ namespace Zun.Aplicacion.IoC
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
+            var typeDatabase = configuration.GetSection("TypeDatabase");
 
             services.Configure<ConnectionStringSettings>(connectionStringSection);
             var connectionString = connectionStringSection.Value;
 
-            services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
+            switch(typeDatabase.Value)
+            {
+                case "MSSQLSERVER":
+                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
+                    break;
+                 case "MYSQL":
+                    services.AddDbContext<ZunDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                    break;
+                default:
+                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
+                    break;
+            }
             services.AddTransient<IZunDbContext, ZunDbContext>();
 
             return services;
