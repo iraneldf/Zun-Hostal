@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 using Zun.Datos.Entidades;
 using Zun.Datos.IUnitOfWork.Interfaces;
@@ -8,11 +9,8 @@ namespace Zun.Dominio.Servicios
 {
     public class EntidadEjemploServicio : ServicioBase<EntidadEjemplo>, IEntidadEjemploServicio
     {
-        private readonly IRepositorioBase<EntidadEjemplo> baseRepository;
-
-        public EntidadEjemploServicio(IUnitOfWork repositories, IRepositorioBase<EntidadEjemplo> baseRepository) : base(repositories, baseRepository)
+        public EntidadEjemploServicio(IUnitOfWork repositories, IRepositorioBase<EntidadEjemplo> baseRepository, IHttpContextAccessor httpContext) : base(repositories, baseRepository, httpContext)
         {
-            this.baseRepository = baseRepository;
         }
     }
 }

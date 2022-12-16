@@ -13,6 +13,7 @@ using Zun.Dominio.Interfaces;
 using Zun.Dominio.Servicios;
 using Zun.Aplicacion.Mapper;
 using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace Zun.Aplicacion.IoC
 {
@@ -37,6 +38,8 @@ namespace Zun.Aplicacion.IoC
             services.AddEndpointsApiExplorer();
 
             services.AddAutoMappers(AutoMapperConfiguration.CreateExpression().AddAutoMapperLeadOportunidade());
+           
+            services.AddHttpContextAccessor();
 
             services.AddCors(options =>
             {
@@ -49,10 +52,10 @@ namespace Zun.Aplicacion.IoC
             });
 
             //Add services to validation
-            services.AddFluentValidation(s =>
-            {
-                s.RegisterValidatorsFromAssemblyContaining<Program>();
-            });
+            
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Program>();
 
             //swagger
             services.AddSwaggerGen(options =>
