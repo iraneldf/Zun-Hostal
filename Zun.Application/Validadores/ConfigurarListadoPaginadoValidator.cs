@@ -9,9 +9,7 @@ namespace Zun.Aplicacion.Validadores.EntidadEjemplo
         public ConfigurarListadoPaginadoValidator()
         {
             RuleFor(dto => dto.CantIgnorar)
-                .NotEmpty().WithMessage("{PropertyName} no puede ser vacio")
-                .NotNull().WithMessage("{PropertyName} es obligatorio")
-                .GreaterThan(0).WithMessage("{PropertyName} debe ser mayor que 0");
+                .NotNull().WithMessage("{PropertyName} es obligatorio");
 
             RuleFor(dto => dto.CantMostrar)
                 .NotEmpty().WithMessage("{PropertyName} no puede ser vacio")
