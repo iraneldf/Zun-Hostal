@@ -111,7 +111,7 @@ namespace Zun.Aplicacion.Controllers
             {
                 (IEnumerable<TEntidad> result, int totalCount) = await AplicarFiltros(configuracionPaginadoDto);
 
-                ListadoPaginadoDto<ElementoListadoPaginadoDto> pagedResultDto = new ListadoPaginadoDto<ElementoListadoPaginadoDto>
+                ListadoPaginadoDto<ElementoListadoPaginadoDto> pagedResultDto = new()
                 {
                     Elementos = _mapper.Map<List<ElementoListadoPaginadoDto>>(result),
                     CantidadTotal = totalCount
@@ -193,7 +193,7 @@ namespace Zun.Aplicacion.Controllers
             {
                 IEnumerable<TEntidad> entities = await _servicioBase.ObtenerTodos();
 
-                SelectList selectList = new SelectList(entities, nombreCampoValor, nombreCampoTexto, valorSeleccionado);
+                SelectList selectList = new(entities, nombreCampoValor, nombreCampoTexto, valorSeleccionado);
                 return Ok(selectList);
             }
             catch (Exception ex)

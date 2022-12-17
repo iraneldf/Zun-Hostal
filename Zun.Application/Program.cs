@@ -1,12 +1,16 @@
 using Zun.Datos.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Zun.Aplicacion.IoC;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 ConfigurationManager configuration = builder.Configuration;
+
 builder.Services.AddRegistration(configuration);
+IoCRegister.AddLogsRegistration(builder);
 
 var app = builder.Build();
 

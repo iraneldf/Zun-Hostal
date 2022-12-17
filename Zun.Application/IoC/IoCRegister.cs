@@ -1,19 +1,18 @@
-﻿using Zun.Datos.Entidades;
-using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 using System.Configuration;
 using System.Reflection;
-using System.Text;
-using Zun.Datos.IUnitOfWork.Repositorios;
-using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Aplicacion.Mapper;
 using Zun.Datos.DbContext;
+using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Datos.IUnitOfWork.Repositorios;
 using Zun.Dominio.Interfaces;
 using Zun.Dominio.Servicios;
-using Zun.Aplicacion.Mapper;
-using FluentValidation.AspNetCore;
-using FluentValidation;
 
 namespace Zun.Aplicacion.IoC
 {
@@ -22,7 +21,7 @@ namespace Zun.Aplicacion.IoC
         public static IServiceCollection AddRegistration(this IServiceCollection services, IConfiguration configuration)
         {
             services.RegistrarDataContext(configuration);
-            services.RegistrarServicios(configuration);
+            services.RegistrarServicios();
             services.RegistrarRepositorios();
             services.RegistrarServiciosDominio();
             services.RegistrarPoliticasAutorizacion();
@@ -30,7 +29,8 @@ namespace Zun.Aplicacion.IoC
             return services;
         }
 
-        public static IServiceCollection RegistrarServicios(this IServiceCollection services, IConfiguration configuration)
+
+        public static IServiceCollection RegistrarServicios(this IServiceCollection services)
         {
 
             services.AddControllers();
@@ -83,6 +83,7 @@ namespace Zun.Aplicacion.IoC
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            
 
             app.UseHttpsRedirection();
 
@@ -97,22 +98,19 @@ namespace Zun.Aplicacion.IoC
 
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
-            var typeDatabase = configuration.GetSection("TypeDatabase");
+            var  connectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
+            string typeDatabase = configuration.GetSection("TypeDatabase").Value;
 
             services.Configure<ConnectionStringSettings>(connectionStringSection);
-            var connectionString = connectionStringSection.Value;
+            string connectionString = connectionStringSection.Value;
 
-            switch(typeDatabase.Value)
+            switch(typeDatabase)
             {
-                case "MSSQLSERVER":
+                case "MSSqlServer":
                     services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
                     break;
-                 case "MYSQL":
+                 case "MySQL":
                     services.AddDbContext<ZunDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-                    break;
-                default:
-                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
                     break;
             }
             services.AddTransient<IZunDbContext, ZunDbContext>();
@@ -140,6 +138,16 @@ namespace Zun.Aplicacion.IoC
         {
             // Agregando las Politicas para la autorizacion           
             return services;
+        }
+      
+        internal static void AddLogsRegistration(WebApplicationBuilder builder)
+        {
+            IConfiguration serilogConfiguration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(serilogConfiguration)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
         }
     }
 }
