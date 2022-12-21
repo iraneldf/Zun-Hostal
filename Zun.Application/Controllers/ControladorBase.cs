@@ -40,11 +40,12 @@ namespace Zun.Aplicacion.Controllers
             try
             {
                 IEnumerable<TEntidadDto> result = _mapper.Map<IEnumerable<TEntidadDto>>(await _servicioBase.ObtenerTodos());
-                return Ok(result);
+                
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = result });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -68,17 +69,13 @@ namespace Zun.Aplicacion.Controllers
 
                 //agregando tarea a la cola para ejecutarla en segundo plano
                 _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
-               servicioBase.GuardarTraza(
-                                   usuario,
-                                   $"Un nuevo elemento con id = {result.Entity.Id} ha sido creado en {typeof(TEntidad).Name}",
-                                   typeof(TEntidad).Name,
-                                   result.Entity, null));
+               servicioBase.GuardarTraza(usuario, $"Un nuevo elemento con id = {result.Entity.Id} ha sido creado en {typeof(TEntidad).Name}", typeof(TEntidad).Name, result.Entity, null));
 
-                return Ok(entityDto);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
 
 
@@ -97,7 +94,7 @@ namespace Zun.Aplicacion.Controllers
             try
             {
                 if (id != modificarDto.Id)
-                    return BadRequest("Erro na atualização");
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = "Erro na atualização" });
 
                 TEntidad? entidadOriginal = await _servicioBase.ObtenerPorId(id);
 
@@ -109,17 +106,13 @@ namespace Zun.Aplicacion.Controllers
 
                 //agregando tarea a la cola para ejecutarla en segundo plano
                 _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
-               servicioBase.GuardarTraza(
-                                   usuario,
-                                   $"Se ha modificado el elemento con id = {id} en {typeof(TEntidad).Name}",
-                                   typeof(TEntidad).Name,                                   
-                                   entidadOriginal,
-                                   result.Entity));
-                return Ok(entityDto);
+               servicioBase.GuardarTraza(usuario, $"Se ha modificado el elemento con id = {id} en {typeof(TEntidad).Name}", typeof(TEntidad).Name, entidadOriginal, result.Entity));
+
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -142,11 +135,11 @@ namespace Zun.Aplicacion.Controllers
                     CantidadTotal = totalCount
                 };
 
-                return Ok(pagedResultDto);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = pagedResultDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -166,15 +159,15 @@ namespace Zun.Aplicacion.Controllers
                 TEntidad? result = await _servicioBase.ObtenerPorId(id);
 
                 if (result == null)
-                    return NotFound("Elemento no encontrado");
+                    return NotFound(new ResponseDto { Status = StatusCodes.Status404NotFound, MensajeError = "Elemento no encontrado" });
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result);
 
-                return Ok(entityDto);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -203,11 +196,11 @@ namespace Zun.Aplicacion.Controllers
                                    typeof(TEntidad).Name,
                                    result.Entity,
                                    null));
-                return Ok(entityDto);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -227,11 +220,11 @@ namespace Zun.Aplicacion.Controllers
                 IEnumerable<TEntidad> entities = await _servicioBase.ObtenerTodos();
 
                 SelectList selectList = new(entities, nombreCampoValor, nombreCampoTexto, valorSeleccionado);
-                return Ok(selectList);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = selectList });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -252,15 +245,15 @@ namespace Zun.Aplicacion.Controllers
                 TEntidad? result = await _servicioBase.ObtenerPorId(id);
 
                 if (result == null)
-                    return NotFound("Elemento no encontrado");
+                    return NotFound(new ResponseDto { Status = StatusCodes.Status404NotFound, MensajeError = "Elemento no encontrado" });
 
                 ModificarDto entityDto = _mapper.Map<ModificarDto>(result);
 
-                return Ok(entityDto);
+                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
