@@ -2,9 +2,9 @@
 using Zun.Datos.ConfiguracionEntidades;
 using Zun.Datos.Entidades;
 
-namespace Zun.Datos.DbContext
+namespace Zun.Datos.DbContexts
 {
-    public class ZunDbContext : Microsoft.EntityFrameworkCore.DbContext, IZunDbContext
+    public class ZunDbContext : DbContext, IZunDbContext
     {
         #region Entidades
         public DbSet<EntidadEjemplo> EntidadesEjemplo { get; set; }

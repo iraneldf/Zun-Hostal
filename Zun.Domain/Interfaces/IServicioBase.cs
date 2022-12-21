@@ -51,6 +51,20 @@ namespace Zun.Dominio.Interfaces
         /// </summary>
         /// <param name="id">Id del elemento</param>
         Task<EntityEntry<TEntidad>> Eliminar(int id);
+        /// <summary>
+        /// Crea varios elementos
+        /// </summary>
+        /// <param name="entidades">listado de elementos a crear</param>
+        /// <returns></returns>
         Task CrearEntidades(List<TEntidad> entidades);
+        /// <summary>
+        /// Guarda un registro en la tabla de las trazas
+        /// </summary>
+        /// <param name="usuario"> usuario que realiza la accion</param>
+        /// <param name="descripcion"> accion realizada por el usuario</param>
+        /// <param name="tablaBD">nombre de la tabla utilizada</param>
+        /// <param name="elemento">Json del elemento original, creado o eliminado </param>
+        /// <param name="elementoModificado">Json del elemento despues de modificado</param>
+        Task GuardarTraza(string? usuario, string descripcion, string tablaBD, object elemento, object? elementoModificado = null);
     }
 }

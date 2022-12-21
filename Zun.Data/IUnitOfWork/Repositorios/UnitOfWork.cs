@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Zun.Datos.Entidades;
-using Zun.Datos.DbContext;
 using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Datos.DbContexts;
 
 namespace Zun.Datos.IUnitOfWork.Repositorios
 {
@@ -10,11 +10,13 @@ namespace Zun.Datos.IUnitOfWork.Repositorios
         private readonly ZunDbContext _context;
 
         public IEntidadEjemploRepositorio EntidadesEjemplo { get; }
+        public ITrazasRepositorio Trazas { get; }
 
-        public UnitOfWork(ZunDbContext context)
+        public UnitOfWork(ZunDbContext context, TrazasDbContext trazaContext)
         {
             _context = context;
             EntidadesEjemplo = new EntidadEjemploRepositorio(context);
+            Trazas = new TrazasRepositorio(trazaContext);
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

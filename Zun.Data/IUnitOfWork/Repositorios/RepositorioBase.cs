@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
-using Zun.Datos.DbContext;
+using Zun.Datos.DbContexts;
 using Zun.Datos.Entidades;
 using Zun.Datos.IUnitOfWork.Interfaces;
 
@@ -23,7 +23,7 @@ namespace Zun.Datos.IUnitOfWork.Repositorios
         public virtual async Task<int> CountAsync() => await _context.Set<TEntidad>().CountAsync();
         public virtual async Task<List<TEntidad>> GetAllAsync(params Expression<Func<TEntidad, object>>[] includeProperties) => await GetQuery(includeProperties).ToListAsync();
         public virtual async Task<List<TEntidad>> GetAllAsync(Expression<Func<TEntidad, bool>> condicion, params Expression<Func<TEntidad, object>>[] includeProperties) => await GetQuery(includeProperties).Where(condicion).ToListAsync();
-        public virtual async Task<TEntidad?> GetByIdAsync(int id) => await _context.Set<TEntidad>().FindAsync(id);
+        public virtual async Task<TEntidad?> GetByIdAsync(int id) => await GetQuery().FirstOrDefaultAsync(e => e.Id == id);
         public virtual async Task<TEntidad?> GetByIdAsync(int id, params Expression<Func<TEntidad, object>>[] includeProperties) => await GetQuery(includeProperties).FirstOrDefaultAsync(e => e.Id == id);
         public virtual EntityEntry<TEntidad> Remove(TEntidad entidad) => _context.Set<TEntidad>().Remove(entidad);
         public virtual void RemoveRange(IEnumerable<TEntidad> entidades) => _context.Set<TEntidad>().RemoveRange(entidades);
@@ -48,7 +48,7 @@ namespace Zun.Datos.IUnitOfWork.Repositorios
 
         public IQueryable<TEntidad> GetQuery(params Expression<Func<TEntidad, object>>[] includeProperties)
         {
-            IQueryable<TEntidad> query = _context.Set<TEntidad>();
+            IQueryable<TEntidad> query = _context.Set<TEntidad>().AsNoTracking();
             return includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
         }
     }

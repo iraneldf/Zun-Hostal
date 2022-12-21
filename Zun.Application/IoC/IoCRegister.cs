@@ -1,14 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.MySql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.MSSqlServer;
 using System.Configuration;
 using System.Reflection;
+using Zun.Aplicacion.AuthorizationFilter;
 using Zun.Aplicacion.Mapper;
-using Zun.Datos.DbContext;
+using Zun.Datos.DbContexts;
 using Zun.Datos.IUnitOfWork.Interfaces;
 using Zun.Datos.IUnitOfWork.Repositorios;
 using Zun.Dominio.Interfaces;
@@ -25,6 +26,8 @@ namespace Zun.Aplicacion.IoC
             services.RegistrarRepositorios();
             services.RegistrarServiciosDominio();
             services.RegistrarPoliticasAutorizacion();
+            services.RegistrarSwagger();
+            services.RegistrarHangfire(configuration);
 
             return services;
         }
@@ -38,7 +41,7 @@ namespace Zun.Aplicacion.IoC
             services.AddEndpointsApiExplorer();
 
             services.AddAutoMappers(AutoMapperConfiguration.CreateExpression().AddAutoMapperLeadOportunidade());
-           
+
             services.AddHttpContextAccessor();
 
             services.AddCors(options =>
@@ -52,12 +55,58 @@ namespace Zun.Aplicacion.IoC
             });
 
             //Add services to validation
-            
+
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<Program>();
 
-            //swagger
+
+            return services;
+        }
+
+        public static void RegistrarHangfire(this IServiceCollection services, IConfiguration configuration)
+        {
+            var zunConnectionString = configuration.GetSection("ConnectionStrings:ZunContext")
+                .Value.Replace("Trust Server Certificate=true;", "");
+            string typeDatabase = configuration.GetSection("TypeDatabase").Value;
+
+            services.AddHangfire(configuration =>
+            {
+                IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
+                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                                    .UseSimpleAssemblyNameTypeSerializer()
+                                    .UseSimpleAssemblyNameTypeSerializer()
+                                    .UseRecommendedSerializerSettings()
+                                    .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
+                switch (typeDatabase)
+                {
+                    case "MSSqlServer":
+                        globalConfiguration.UseSqlServerStorage(zunConnectionString);
+                        break;
+                    case "MySQL":
+                        globalConfiguration.UseStorage(
+                            new MySqlStorage(
+                                zunConnectionString,
+                                new MySqlStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    TablesPrefix = "Hangfire",
+                                }
+                            )
+                        );
+                    break;
+                }
+            });
+            services.AddHangfireServer();
+        }
+
+        private static void RegistrarSwagger(this IServiceCollection services)
+        {
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -71,8 +120,6 @@ namespace Zun.Aplicacion.IoC
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
-
-            return services;
         }
 
         public static IApplicationBuilder AddRegistration(WebApplication app, IWebHostEnvironment env)
@@ -83,13 +130,18 @@ namespace Zun.Aplicacion.IoC
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            
+
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseHangfireDashboard(options: new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
 
             app.Run();
 
@@ -98,22 +150,30 @@ namespace Zun.Aplicacion.IoC
 
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
-            var  connectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
             string typeDatabase = configuration.GetSection("TypeDatabase").Value;
 
-            services.Configure<ConnectionStringSettings>(connectionStringSection);
-            string connectionString = connectionStringSection.Value;
+            var zunConnectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
+            var trazasConnectionStringSection = configuration.GetSection("ConnectionStrings:TrazaContext");
 
-            switch(typeDatabase)
+            services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
+            services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
+
+            string zunConnectionString = zunConnectionStringSection.Value;
+            string trazasConnectionString = trazasConnectionStringSection.Value;
+
+            switch (typeDatabase)
             {
                 case "MSSqlServer":
-                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: connectionString));
+                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: zunConnectionString));
+                    services.AddDbContext<TrazasDbContext>(options => options.UseSqlServer(connectionString: trazasConnectionString));
                     break;
-                 case "MySQL":
-                    services.AddDbContext<ZunDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                case "MySQL":
+                    services.AddDbContext<ZunDbContext>(options => options.UseMySql(zunConnectionString, ServerVersion.AutoDetect(zunConnectionString)));
+                    services.AddDbContext<TrazasDbContext>(options => options.UseMySql(trazasConnectionString, ServerVersion.AutoDetect(trazasConnectionString)));
                     break;
             }
             services.AddTransient<IZunDbContext, ZunDbContext>();
+            services.AddTransient<ITrazasDbContext, TrazasDbContext>();
 
             return services;
         }
@@ -122,6 +182,7 @@ namespace Zun.Aplicacion.IoC
         {
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
             services.AddScoped<IEntidadEjemploRepositorio, EntidadEjemploRepositorio>();
+            services.AddScoped<ITrazasDbContext, TrazasDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
@@ -139,7 +200,7 @@ namespace Zun.Aplicacion.IoC
             // Agregando las Politicas para la autorizacion           
             return services;
         }
-      
+
         internal static void AddLogsRegistration(WebApplicationBuilder builder)
         {
             IConfiguration serilogConfiguration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();

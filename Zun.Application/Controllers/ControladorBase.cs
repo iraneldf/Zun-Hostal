@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,11 +18,15 @@ namespace Zun.Aplicacion.Controllers
     {
         protected readonly IMapper _mapper;
         protected readonly IServicioBase<TEntidad> _servicioBase;
+        protected readonly IBackgroundJobClient _clientHangfire;
+        protected string? usuario;
 
-        public ControladorBase(IMapper mapper, IServicioBase<TEntidad> servicioBase)
+        public ControladorBase(IMapper mapper, IServicioBase<TEntidad> servicioBase, IBackgroundJobClient clientHangfire)
         {
             _servicioBase = servicioBase;
             _mapper = mapper;
+            _clientHangfire = clientHangfire;
+            usuario = User?.Identity?.Name;
         }
 
         /// <summary>
@@ -61,12 +66,22 @@ namespace Zun.Aplicacion.Controllers
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 
+                //agregando tarea a la cola para ejecutarla en segundo plano
+                _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
+               servicioBase.GuardarTraza(
+                                   usuario,
+                                   $"Un nuevo elemento con id = {result.Entity.Id} ha sido creado en {typeof(TEntidad).Name}",
+                                   typeof(TEntidad).Name,
+                                   result.Entity, null));
+
                 return Ok(entityDto);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
+
+
         }
 
         /// <summary>
@@ -84,12 +99,22 @@ namespace Zun.Aplicacion.Controllers
                 if (id != modificarDto.Id)
                     return BadRequest("Erro na atualização");
 
+                TEntidad? entidadOriginal = await _servicioBase.ObtenerPorId(id);
+
                 TEntidad entity = _mapper.Map<TEntidad>(modificarDto);
                 EntityEntry<TEntidad> result = _servicioBase.Modificar(entity);
                 await _servicioBase.SaveChangesAsync();
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 
+                //agregando tarea a la cola para ejecutarla en segundo plano
+                _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
+               servicioBase.GuardarTraza(
+                                   usuario,
+                                   $"Se ha modificado el elemento con id = {id} en {typeof(TEntidad).Name}",
+                                   typeof(TEntidad).Name,                                   
+                                   entidadOriginal,
+                                   result.Entity));
                 return Ok(entityDto);
             }
             catch (Exception ex)
@@ -170,6 +195,14 @@ namespace Zun.Aplicacion.Controllers
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 
+                //agregando tarea a la cola para ejecutarla en segundo plano
+                _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
+               servicioBase.GuardarTraza(
+                                   usuario,
+                                   $"Se ha eliminado el elemento con id = {id} en {typeof(TEntidad).Name}",
+                                   typeof(TEntidad).Name,
+                                   result.Entity,
+                                   null));
                 return Ok(entityDto);
             }
             catch (Exception ex)
@@ -240,6 +273,9 @@ namespace Zun.Aplicacion.Controllers
         {
             return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar);
         }
+
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
 using System.Linq.Expressions;
 using Zun.Datos.Entidades;
 using Zun.Datos.IUnitOfWork.Interfaces;
@@ -47,7 +48,7 @@ namespace Zun.Dominio.Servicios
             if (esNuevoElemento)
             {
                 entidad.FechaCreacion = DateTime.Now;
-                entidad.CreadoPor =  _httpContext.HttpContext.User.Identity?.Name?? String.Empty;
+                entidad.CreadoPor = _httpContext.HttpContext.User.Identity?.Name ?? String.Empty;
             }
             entidad.FechaModificacion = DateTime.Now;
             entidad.ModificadoPor = _httpContext.HttpContext.User.Identity?.Name ?? String.Empty;
@@ -56,7 +57,8 @@ namespace Zun.Dominio.Servicios
 
         private static List<TEntidad> EstablecerDatosAuditoria(List<TEntidad> entidades, bool esNuevoElemento = true)
         {
-            entidades.ForEach(entidad => {
+            entidades.ForEach(entidad =>
+            {
                 if (esNuevoElemento)
                 {
                     entidad.FechaCreacion = DateTime.Now;
@@ -67,6 +69,21 @@ namespace Zun.Dominio.Servicios
             });
 
             return entidades;
+        }
+
+        public async Task GuardarTraza(string? usuario, string descripcion, string tablaBD, object elemento, object? elementoModificado = null)
+        {
+            Traza traza = new() { 
+                Descripcion = descripcion,
+                TablaBD = tablaBD,
+                Elemento = JsonConvert.SerializeObject(elemento),
+                ElementoModificado = elementoModificado == null? String.Empty : JsonConvert.SerializeObject(elementoModificado),
+                FechaCreacion = DateTime.Now,
+                CreadoPor = usuario ?? String.Empty,
+                FechaModificacion = DateTime.Now,
+                ModificadoPor = usuario ?? String.Empty
+            };
+            await _repositorios.Trazas.AddAsync(traza);
         }
 
         protected virtual IQueryable<TEntidad> CreateQuery()

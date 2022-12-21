@@ -1,5 +1,6 @@
 ﻿
 using AutoMapper;
+using Hangfire;
 using System.Linq.Expressions;
 using Zun.Aplicacion.Dtos.EntidadEjemplo;
 using Zun.Datos.Entidades;
@@ -9,7 +10,7 @@ namespace Zun.Aplicacion.Controllers
 {
     public class EntidadEjemploController : ControladorBase<EntidadEjemplo, EntidadEjemploDto, CrearEntidadEjemploInputDto, ModificarEntidadEjemploInputDto, EntidadEjemploListadoPaginadoOutputDto, FiltroEntidadEjemploListadoPaginadoDto>
     {
-        public EntidadEjemploController(IMapper mapper, IServicioBase<EntidadEjemplo> servicioBase) : base(mapper, servicioBase)
+        public EntidadEjemploController(IMapper mapper, IServicioBase<EntidadEjemplo> servicioBase, IBackgroundJobClient clientHangfire) : base(mapper, servicioBase, clientHangfire)
         {
 
         }

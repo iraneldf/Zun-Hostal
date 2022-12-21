@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Zun.Datos.DbContext;
+using Zun.Datos.DbContexts;
 
 #nullable disable
 
-namespace Zun.Datos.Migrations
+namespace Zun.Datos.Migrations.TrazasDb
 {
-    [DbContext(typeof(ZunDbContext))]
-    [Migration("20221211214819_Inicial")]
-    partial class Inicial
+    [DbContext(typeof(TrazasDbContext))]
+    partial class TrazasDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +22,7 @@ namespace Zun.Datos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Zun.Datos.Entidades.EntidadEjemplo", b =>
+            modelBuilder.Entity("Zun.Datos.Entidades.Traza", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,9 +34,17 @@ namespace Zun.Datos.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Edad")
-                        .HasMaxLength(3)
-                        .HasColumnType("int");
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Elemento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ElementoModificado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
@@ -46,14 +52,11 @@ namespace Zun.Datos.Migrations
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Intereses")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ModificadoPor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("TablaBD")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -63,10 +66,7 @@ namespace Zun.Datos.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("Nombre")
-                        .IsUnique();
-
-                    b.ToTable("EntidadEjemplo", (string)null);
+                    b.ToTable("Trazas", (string)null);
                 });
 #pragma warning restore 612, 618
         }

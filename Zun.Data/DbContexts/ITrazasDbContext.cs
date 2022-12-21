@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Zun.Datos.Entidades;
 
-namespace Zun.Datos.DbContext
+namespace Zun.Datos.DbContexts
 {
-    public interface IZunDbContext
+    public interface ITrazasDbContext
     {
         #region Entidades
 
-        DbSet<EntidadEjemplo> EntidadesEjemplo { get; set; }
+        DbSet<Traza> Trazas { get; set; }
 
         #endregion
     }

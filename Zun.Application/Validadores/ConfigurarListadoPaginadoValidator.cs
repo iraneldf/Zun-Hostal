@@ -2,7 +2,7 @@
 using Zun.Aplicacion.Dtos;
 using Zun.Aplicacion.Dtos.EntidadEjemplo;
 
-namespace Zun.Aplicacion.Validadores.EntidadEjemplo
+namespace Zun.Aplicacion.Validadores
 {
     public class ConfigurarListadoPaginadoValidator : AbstractValidator<ConfiguracionListadoPaginadoDto>
     {
@@ -16,7 +16,7 @@ namespace Zun.Aplicacion.Validadores.EntidadEjemplo
                 .NotNull().WithMessage("{PropertyName} es obligatorio")
                 .GreaterThan(0).WithMessage("{PropertyName} debe ser mayor que 0");
 
-           
+
         }
     }
 }
