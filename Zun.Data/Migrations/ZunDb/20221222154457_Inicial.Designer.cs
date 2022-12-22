@@ -2,60 +2,66 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zun.Datos.DbContexts;
 
 #nullable disable
 
-namespace Zun.Datos.Migrations.TrazasDb
+namespace Zun.Datos.Migrations.ZunDb
 {
-    [DbContext(typeof(TrazasDbContext))]
-    [Migration("20221220141019_AgrgadaTrazas")]
-    partial class AgrgadaTrazas
+    [DbContext(typeof(ZunDbContext))]
+    [Migration("20221222154457_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Zun.Datos.Entidades.Traza", b =>
+            modelBuilder.Entity("Zun.Datos.Entidades.EntidadEjemplo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("CreadoPor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Edad")
+                        .HasMaxLength(3)
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Intereses")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ModificadoPor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Trazas", (string)null);
+                    b.HasIndex("Nombre")
+                        .IsUnique();
+
+                    b.ToTable("EntidadEjemplo", null, t => t.ExcludeFromMigrations());
                 });
 #pragma warning restore 612, 618
         }
