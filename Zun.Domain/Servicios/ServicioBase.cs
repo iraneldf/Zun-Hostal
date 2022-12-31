@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
 using Zun.Datos.Entidades;
@@ -22,6 +23,9 @@ namespace Zun.Dominio.Servicios
             _httpContext = httpContext;
         }
 
+        public virtual async Task<IDbContextTransaction> IniciarTransaccion() => await _repositorioBase.IniciarTransaccionAsync();
+        public virtual async Task CommitTransaccion() => await _repositorioBase.CommitTransaccionAsync();
+        public virtual async Task RollbackTransaccion() => await _repositorioBase.RollbackTransaccionAsync();
         public virtual async Task<EntityEntry<TEntidad>> Crear(TEntidad entidad) => await _repositorioBase.AddAsync(EstablecerDatosAuditoria(entidad));
         public virtual async Task CrearEntidades(List<TEntidad> entidades) => await _repositorioBase.AddRangeAsync(EstablecerDatosAuditoria(entidades));
         public virtual EntityEntry<TEntidad> Eliminar(TEntidad entidad) => _repositorioBase.Remove(entidad);
@@ -32,7 +36,7 @@ namespace Zun.Dominio.Servicios
                 throw new Exception("Elemento no encontrado");
             return _repositorioBase.Remove(entidad);
         }
-        public virtual async Task<int> SaveChangesAsync() => await _repositorioBase.SaveChangesAsync();
+        public virtual async Task<int> SaveChanges() => await _repositorioBase.SaveChangesAsync();
         public virtual EntityEntry<TEntidad> Modificar(TEntidad entidad) => _repositorioBase.Update(EstablecerDatosAuditoria(entidad, esNuevoElemento: false));
         public virtual void ModificarEntidades(List<TEntidad> entidades) => _repositorioBase.UpdateRange(EstablecerDatosAuditoria(entidades, esNuevoElemento: false));
         public virtual async Task<TEntidad?> ObtenerPorId(int id) => await _repositorioBase.FirstAsync(entidad => entidad.Id == id);

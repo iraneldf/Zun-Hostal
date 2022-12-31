@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 using Zun.Datos.Entidades;
 
@@ -29,7 +30,7 @@ namespace Zun.Dominio.Interfaces
         /// <summary>
         /// Persiste los cambios en la Base de Datos
         /// </summary>
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChanges();
         /// <summary>
         /// Retorna un listado paginado y la cantidad total de elementos
         /// </summary>
@@ -66,5 +67,8 @@ namespace Zun.Dominio.Interfaces
         /// <param name="elemento">Json del elemento original, creado o eliminado </param>
         /// <param name="elementoModificado">Json del elemento despues de modificado</param>
         Task GuardarTraza(string? usuario, string descripcion, string tablaBD, object elemento, object? elementoModificado = null);
+        Task RollbackTransaccion();
+        Task CommitTransaccion();
+        Task<IDbContextTransaction> IniciarTransaccion();
     }
 }

@@ -63,7 +63,7 @@ namespace Zun.Aplicacion.Controllers
             {
                 TEntidad entity = _mapper.Map<TEntidad>(crearDto);
                 EntityEntry<TEntidad> result = await _servicioBase.Crear(entity);
-                await _servicioBase.SaveChangesAsync();
+                await _servicioBase.SaveChanges();
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 
@@ -100,7 +100,7 @@ namespace Zun.Aplicacion.Controllers
 
                 TEntidad entity = _mapper.Map<TEntidad>(modificarDto);
                 EntityEntry<TEntidad> result = _servicioBase.Modificar(entity);
-                await _servicioBase.SaveChangesAsync();
+                await _servicioBase.SaveChanges();
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 
@@ -184,7 +184,7 @@ namespace Zun.Aplicacion.Controllers
             try
             {
                 EntityEntry<TEntidad> result = await _servicioBase.Eliminar(id);
-                await _servicioBase.SaveChangesAsync();
+                await _servicioBase.SaveChanges();
 
                 TEntidadDto entityDto = _mapper.Map<TEntidadDto>(result.Entity);
 

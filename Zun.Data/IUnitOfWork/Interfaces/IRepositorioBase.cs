@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 using Zun.Datos.Entidades;
 
@@ -25,6 +26,8 @@ namespace Zun.Datos.IUnitOfWork.Interfaces
         /// </summary>
         /// <param name="condicion">Condicion de busqueda</param>
         Task<bool> AnyAsync(Expression<Func<TEntidad, bool>> condicion);
+        Task CommitTransaccionAsync();
+
         /// <summary>
         /// Comprueba que exista la entidad especificada
         /// </summary>
@@ -72,6 +75,8 @@ namespace Zun.Datos.IUnitOfWork.Interfaces
         /// </summary>
         /// <param name="includeProperties">Propiedades navigacionales para incluir</param>
         IQueryable<TEntidad> GetQuery(params Expression<Func<TEntidad, object>>[] includeProperties);
+        Task<IDbContextTransaction> IniciarTransaccionAsync();
+
         /// <summary>
         /// Retorna la ultima entidad
         /// </summary>
@@ -98,6 +103,8 @@ namespace Zun.Datos.IUnitOfWork.Interfaces
         /// </summary>
         /// <param name="entidades">Entidades a eliminar</param>
         void RemoveRange(IEnumerable<TEntidad> entidades);
+        Task RollbackTransaccionAsync();
+
         /// <summary>
         /// Persiste los cambios en la Base de Datos
         /// </summary>

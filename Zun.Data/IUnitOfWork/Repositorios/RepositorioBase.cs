@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 using Zun.Datos.DbContexts;
 using Zun.Datos.Entidades;
@@ -51,5 +52,10 @@ namespace Zun.Datos.IUnitOfWork.Repositorios
             IQueryable<TEntidad> query = _context.Set<TEntidad>().AsNoTracking();
             return includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
         }
+
+        public virtual async Task<IDbContextTransaction> IniciarTransaccionAsync() => await _context.Database.BeginTransactionAsync();
+        public virtual async Task CommitTransaccionAsync() => await _context.Database.CommitTransactionAsync();
+        public virtual async Task RollbackTransaccionAsync() => await _context.Database.RollbackTransactionAsync();
+        
     }
 }
