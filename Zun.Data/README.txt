@@ -1,3 +1,3 @@
-add-migration "<nombreMigracion>" -c <nombreDbContext>
-update-database -context <nombreDbContext>
+add-migration "<nombreMigracion>" -c ZunDbContext
+update-database -context ZunDbContext
 remove-migration -context ZunDbContext

@@ -2,6 +2,8 @@
 using Zun.Datos.Entidades;
 using Zun.Datos.IUnitOfWork.Interfaces;
 using Zun.Datos.DbContexts;
+using Zun.Datos.IUnitOfWork.Interfaces.Seguridad;
+using Zun.Datos.IUnitOfWork.Repositorios.Seguridad;
 
 namespace Zun.Datos.IUnitOfWork.Repositorios
 {
@@ -10,12 +12,16 @@ namespace Zun.Datos.IUnitOfWork.Repositorios
         private readonly ZunDbContext _context;
 
         public IEntidadEjemploRepositorio EntidadesEjemplo { get; }
+        public IRolRepositorio Roles { get; }
+        public IUsuarioRepositorio Usuarios { get; }
         public ITrazasRepositorio Trazas { get; }
 
         public UnitOfWork(ZunDbContext context, TrazasDbContext trazaContext)
         {
             _context = context;
             EntidadesEjemplo = new EntidadEjemploRepositorio(context);
+            Roles = new RolRepositorio(context);
+            Usuarios = new UsuarioRepositorio(context);
             Trazas = new TrazasRepositorio(trazaContext);
         }
 

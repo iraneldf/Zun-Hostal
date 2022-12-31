@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Hangfire.Common;
 using Hangfire.MySql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Serilog;
 using System.Configuration;
 using System.Reflection;
@@ -11,9 +13,13 @@ using Zun.Aplicacion.AuthorizationFilter;
 using Zun.Aplicacion.Mapper;
 using Zun.Datos.DbContexts;
 using Zun.Datos.IUnitOfWork.Interfaces;
+using Zun.Datos.IUnitOfWork.Interfaces.Seguridad;
 using Zun.Datos.IUnitOfWork.Repositorios;
+using Zun.Datos.IUnitOfWork.Repositorios.Seguridad;
 using Zun.Dominio.Interfaces;
+using Zun.Dominio.Interfaces.Seguridad;
 using Zun.Dominio.Servicios;
+using Zun.Dominio.Servicios.Seguridad;
 
 namespace Zun.Aplicacion.IoC
 {
@@ -37,6 +43,7 @@ namespace Zun.Aplicacion.IoC
         {
 
             services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
 
@@ -53,7 +60,7 @@ namespace Zun.Aplicacion.IoC
                     builder.AllowAnyMethod();
                 });
             });
-
+            
             //Add services to validation
 
             services.AddFluentValidationAutoValidation();
@@ -73,10 +80,9 @@ namespace Zun.Aplicacion.IoC
             services.AddHangfire(configuration =>
             {
                 IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
-                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)                                    
                                     .UseSimpleAssemblyNameTypeSerializer()
-                                    .UseSimpleAssemblyNameTypeSerializer()
-                                    .UseRecommendedSerializerSettings()
+                                    .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
                                     .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
                 switch (typeDatabase)
                 {
@@ -184,6 +190,12 @@ namespace Zun.Aplicacion.IoC
             services.AddScoped<IEntidadEjemploRepositorio, EntidadEjemploRepositorio>();
             services.AddScoped<ITrazasDbContext, TrazasDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            #region Seguridad
+            services.AddScoped<IRolRepositorio, RolRepositorio>();
+            services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+            services.AddScoped<ITareaRepositorio, TareaRepositorio>();
+            #endregion
             return services;
         }
 
@@ -191,6 +203,12 @@ namespace Zun.Aplicacion.IoC
         {
             services.AddScoped(typeof(IServicioBase<>), typeof(ServicioBase<>));
             services.AddScoped<IEntidadEjemploServicio, EntidadEjemploServicio>();
+         
+            #region Seguridad
+            services.AddScoped<IUsuarioServicio, UsuarioServicio>();
+            services.AddScoped<IRolServicio, RolServicio>();
+            services.AddScoped<ITareaServicio, TareaServicio>();
+            #endregion
 
             return services;
         }
