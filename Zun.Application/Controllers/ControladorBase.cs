@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 using Zun.Aplicacion.Dtos;
@@ -73,12 +74,24 @@ namespace Zun.Aplicacion.Controllers
 
                 return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
             }
+            catch (DbUpdateException ex)
+            {
+                string mensaje = ex.InnerException?.Message ?? ex.Message;
+
+                if (mensaje.ToLower().Contains("duplicate"))
+                {
+                    string entidad = typeof(TEntidad).Name;
+                    string campo = mensaje.Split($"IX_{entidad}_")[1].Split('\'')[0];
+
+                    mensaje = $"Ya existe {campo} con ese valor.";
+                }
+                return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = mensaje });
+            }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
+                return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
+
             }
-
-
         }
 
         /// <summary>
@@ -109,6 +122,19 @@ namespace Zun.Aplicacion.Controllers
                servicioBase.GuardarTraza(usuario, $"Se ha modificado el elemento con id = {id} en {typeof(TEntidad).Name}", typeof(TEntidad).Name, entidadOriginal, result.Entity));
 
                 return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = entityDto });
+            }
+            catch (DbUpdateException ex)
+            {
+                string mensaje = ex.InnerException?.Message ?? ex.Message;
+
+                if (mensaje.ToLower().Contains("duplicate"))
+                {
+                    string entidad = typeof(TEntidad).Name;
+                    string campo = mensaje.Split($"IX_{entidad}_")[1].Split('\'')[0];
+
+                    mensaje = $"Ya existe {campo} con ese valor.";
+                }
+                return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = mensaje });
             }
             catch (Exception ex)
             {
