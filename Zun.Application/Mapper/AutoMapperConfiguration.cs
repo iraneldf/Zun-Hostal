@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Zun.Aplicacion.Mapper.EntidadesEjemplo;
-using Zun.Aplicacion.Mapper.Seguridad;
 
 namespace Zun.Aplicacion.Mapper
 {
@@ -14,9 +13,6 @@ namespace Zun.Aplicacion.Mapper
         public static MapperConfigurationExpression AddAutoMapperLeadOportunidade(this MapperConfigurationExpression cfg)
         {
             cfg.AddProfile<EntidadEjemploDtoProfile>();
-
-            cfg.AddProfile<RolDtoProfile>();
-            cfg.AddProfile<TareaDtoProfile>();
 
             return cfg;
         }

@@ -6,9 +6,7 @@ namespace Zun.Datos.DbContexts
 {
     public class ZunDbContext : DbContext, IZunDbContext
     {
-        #region Entidades
         public DbSet<EntidadEjemplo> EntidadesEjemplo { get; set; }
-        #endregion
 
         public ZunDbContext(DbContextOptions<ZunDbContext> options)
             : base(options)
