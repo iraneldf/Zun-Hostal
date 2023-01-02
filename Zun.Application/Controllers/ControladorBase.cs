@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 using Zun.Aplicacion.Dtos;
+using Zun.Aplicacion.Helper;
 using Zun.Datos.Entidades;
 using Zun.Dominio.Interfaces;
 
@@ -245,7 +246,7 @@ namespace Zun.Aplicacion.Controllers
             {
                 IEnumerable<TEntidad> entities = await _servicioBase.ObtenerTodos();
 
-                SelectList selectList = new(entities, nombreCampoValor, nombreCampoTexto, valorSeleccionado);
+                SelectList selectList = new(entities, nombreCampoValor.PrimeraLetraMayuscula(), nombreCampoTexto.PrimeraLetraMayuscula(), valorSeleccionado);
                 return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = selectList });
             }
             catch (Exception ex)
