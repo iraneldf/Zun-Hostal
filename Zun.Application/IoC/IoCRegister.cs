@@ -56,7 +56,7 @@ namespace Zun.Aplicacion.IoC
                     builder.AllowAnyMethod();
                 });
             });
-            
+
             //Add services to validation
 
             services.AddFluentValidationAutoValidation();
@@ -71,38 +71,30 @@ namespace Zun.Aplicacion.IoC
         {
             var zunConnectionString = configuration.GetSection("ConnectionStrings:ZunContext")
                 .Value.Replace("Trust Server Certificate=true;", "");
-            string typeDatabase = configuration.GetSection("TypeDatabase").Value;
 
             services.AddHangfire(configuration =>
             {
                 IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
-                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)                                    
+                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                                     .UseSimpleAssemblyNameTypeSerializer()
                                     .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
                                     .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
-                switch (typeDatabase)
-                {
-                    case "MSSqlServer":
-                        globalConfiguration.UseSqlServerStorage(zunConnectionString);
-                        break;
-                    case "MySQL":
-                        globalConfiguration.UseStorage(
-                            new MySqlStorage(
-                                zunConnectionString,
-                                new MySqlStorageOptions
-                                {
-                                    QueuePollInterval = TimeSpan.FromSeconds(10),
-                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                                    PrepareSchemaIfNecessary = true,
-                                    DashboardJobListLimit = 25000,
-                                    TransactionTimeout = TimeSpan.FromMinutes(1),
-                                    TablesPrefix = "Hangfire",
-                                }
-                            )
-                        );
-                    break;
-                }
+
+                globalConfiguration.UseStorage(
+                    new MySqlStorage(
+                        zunConnectionString,
+                        new MySqlStorageOptions
+                        {
+                            QueuePollInterval = TimeSpan.FromSeconds(10),
+                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                            PrepareSchemaIfNecessary = true,
+                            DashboardJobListLimit = 25000,
+                            TransactionTimeout = TimeSpan.FromMinutes(1),
+                            TablesPrefix = "Hangfire",
+                        }
+                    )
+                );
             });
             services.AddHangfireServer();
         }
@@ -152,28 +144,25 @@ namespace Zun.Aplicacion.IoC
 
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
-            string typeDatabase = configuration.GetSection("TypeDatabase").Value;
 
             var zunConnectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
             var trazasConnectionStringSection = configuration.GetSection("ConnectionStrings:TrazaContext");
+            var mssqlConnectionStringSection = configuration.GetSection("ConnectionStrings:MSSQLContext");
 
             services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
             services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
+            services.Configure<ConnectionStringSettings>(mssqlConnectionStringSection);
 
             string zunConnectionString = zunConnectionStringSection.Value;
             string trazasConnectionString = trazasConnectionStringSection.Value;
+            string mssqlConnectionString = mssqlConnectionStringSection.Value;
 
-            switch (typeDatabase)
-            {
-                case "MSSqlServer":
-                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: zunConnectionString));
-                    services.AddDbContext<TrazasDbContext>(options => options.UseSqlServer(connectionString: trazasConnectionString));
-                    break;
-                case "MySQL":
-                    services.AddDbContext<ZunDbContext>(options => options.UseMySql(zunConnectionString, ServerVersion.AutoDetect(zunConnectionString)));
-                    services.AddDbContext<TrazasDbContext>(options => options.UseMySql(trazasConnectionString, ServerVersion.AutoDetect(trazasConnectionString)));
-                    break;
-            }
+            //"MSSqlServer":
+            services.AddDbContext<MSSQLDbContext>(options => options.UseSqlServer(connectionString: mssqlConnectionString));
+            //"MySQL":
+            services.AddDbContext<ZunDbContext>(options => options.UseMySql(zunConnectionString, ServerVersion.AutoDetect(zunConnectionString)));
+            services.AddDbContext<TrazasDbContext>(options => options.UseMySql(trazasConnectionString, ServerVersion.AutoDetect(trazasConnectionString)));
+
             services.AddTransient<IZunDbContext, ZunDbContext>();
             services.AddTransient<ITrazasDbContext, TrazasDbContext>();
 
@@ -186,7 +175,7 @@ namespace Zun.Aplicacion.IoC
             services.AddScoped<IEntidadEjemploRepositorio, EntidadEjemploRepositorio>();
             services.AddScoped<ITrazasDbContext, TrazasDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-                  
+
             return services;
         }
 
@@ -194,7 +183,7 @@ namespace Zun.Aplicacion.IoC
         {
             services.AddScoped(typeof(IServicioBase<>), typeof(ServicioBase<>));
             services.AddScoped<IEntidadEjemploServicio, EntidadEjemploServicio>();
-         
+
             return services;
         }
 
