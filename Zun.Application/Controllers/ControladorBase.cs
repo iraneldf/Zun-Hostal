@@ -82,7 +82,7 @@ namespace Zun.Aplicacion.Controllers
                 if (mensaje.ToLower().Contains("duplicate"))
                 {
                     string entidad = typeof(TEntidad).Name;
-                    string campo = mensaje.Split($"IX_{entidad}_")[1].Split('\'')[0];
+                    string campo = mensaje.Split("_").Last().Replace("'","").Split('\'')[0];
 
                     mensaje = $"Ya existe {campo} con ese valor.";
                 }
@@ -131,7 +131,7 @@ namespace Zun.Aplicacion.Controllers
                 if (mensaje.ToLower().Contains("duplicate"))
                 {
                     string entidad = typeof(TEntidad).Name;
-                    string campo = mensaje.Split($"IX_{entidad}_")[1].Split('\'')[0];
+                    string campo = mensaje.Split("_").Last().Replace("'","").Split('\'')[0];
 
                     mensaje = $"Ya existe {campo} con ese valor.";
                 }
