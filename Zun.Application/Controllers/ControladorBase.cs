@@ -240,7 +240,7 @@ namespace Zun.Aplicacion.Controllers
         /// <response code="200">Retorna listao de elementos para incluirlos en un dropdown</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
         [HttpGet("[action]")]
-        public virtual async Task<IActionResult> ObtenetElementosParaDropdown([FromQuery] string nombreCampoValor, [FromQuery] string nombreCampoTexto, [FromQuery] object valorSeleccionado)
+        public virtual async Task<IActionResult> ObtenetElementosParaDropdown([FromQuery] string nombreCampoValor, [FromQuery] string nombreCampoTexto, [FromQuery] string? valorSeleccionado)
         {
             try
             {
