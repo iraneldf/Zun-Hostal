@@ -3,7 +3,7 @@ using Zun.Datos.Entidades;
 
 namespace Zun.Datos.ConfiguracionEntidades
 {
-    public class BDConfiguracionBase<TEntity> where TEntity : EntitidadBase
+    public class BDConfiguracionBase<TEntity> where TEntity : EntidadBase
     {
         public static void SetEntityBuilder(ModelBuilder modelBuilder)
         {

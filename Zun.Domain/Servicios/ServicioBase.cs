@@ -10,7 +10,7 @@ using Zun.Dominio.Interfaces;
 
 namespace Zun.Dominio.Servicios
 {
-    public class ServicioBase<TEntidad> : IServicioBase<TEntidad> where TEntidad : EntitidadBase
+    public class ServicioBase<TEntidad> : IServicioBase<TEntidad> where TEntidad : EntidadBase
     {
         protected readonly IRepositorioBase<TEntidad> _repositorioBase;
         protected readonly IUnitOfWork _repositorios;

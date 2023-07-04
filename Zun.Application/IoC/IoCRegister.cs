@@ -2,15 +2,18 @@
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.MySql;
+using Hangfire.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Serilog;
 using System.Configuration;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Zun.Aplicacion.AuthorizationFilter;
 using Zun.Aplicacion.Mapper;
 using Zun.Datos.DbContexts;
+using Zun.Datos.Enum;
 using Zun.Datos.IUnitOfWork;
 using Zun.Datos.IUnitOfWork.Interfaces;
 using Zun.Datos.IUnitOfWork.Repositorios;
@@ -63,39 +66,28 @@ namespace Zun.Aplicacion.IoC
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<Program>();
 
+            // Ignorar Ciclos en los json
+            services.AddMvc().AddJsonOptions(
+                options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+            );
 
             return services;
         }
-
+        
+        // Registramos Hangfire dependiendo del tipo de Servidor
         public static void RegistrarHangfire(this IServiceCollection services, IConfiguration configuration)
         {
-            var zunConnectionString = configuration.GetSection("ConnectionStrings:ZunContext")
-                .Value.Replace("Trust Server Certificate=true;", "");
+            string servidor = configuration.GetSection("Servidor").Value;
 
-            services.AddHangfire(configuration =>
+            // Si alguien no escribió correctamente en el appsetings el servidor,
+            // este se configura por defecto para SqlServer
+            if (!servidor.Equals(ETipoServidor.MySql.ToString())
+                || !servidor.Equals(ETipoServidor.SqlServer.ToString()))
             {
-                IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
-                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                                    .UseSimpleAssemblyNameTypeSerializer()
-                                    .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
-                                    .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
+                servidor = ETipoServidor.SqlServer.ToString();
+            }
 
-                globalConfiguration.UseStorage(
-                    new MySqlStorage(
-                        zunConnectionString,
-                        new MySqlStorageOptions
-                        {
-                            QueuePollInterval = TimeSpan.FromSeconds(10),
-                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                            PrepareSchemaIfNecessary = true,
-                            DashboardJobListLimit = 25000,
-                            TransactionTimeout = TimeSpan.FromMinutes(1),
-                            TablesPrefix = "Hangfire",
-                        }
-                    )
-                );
-            });
+            services.AddHangfire(ConfigurarHangFire(servidor, configuration));
             services.AddHangfireServer();
         }
 
@@ -142,30 +134,20 @@ namespace Zun.Aplicacion.IoC
             return app;
         }
 
+        // Registrar los DbContext dependiendo del tipo de Servidor
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
+            string servidor = configuration.GetSection("Servidor").Value;
 
-            var zunConnectionStringSection = configuration.GetSection("ConnectionStrings:ZunContext");
-            var trazasConnectionStringSection = configuration.GetSection("ConnectionStrings:TrazaContext");
-            var mssqlConnectionStringSection = configuration.GetSection("ConnectionStrings:MSSQLContext");
+            // Si alguien no escribió correctamente en el appsetings el servidor,
+            // este se configura por defecto para SqlServer
+            if (!servidor.Equals(ETipoServidor.MySql.ToString())
+                || !servidor.Equals(ETipoServidor.SqlServer.ToString()))
+            {
+                servidor = ETipoServidor.SqlServer.ToString();
+            }
 
-            services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
-            services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
-            services.Configure<ConnectionStringSettings>(mssqlConnectionStringSection);
-
-            string zunConnectionString = zunConnectionStringSection.Value;
-            string trazasConnectionString = trazasConnectionStringSection.Value;
-            string mssqlConnectionString = mssqlConnectionStringSection.Value;
-
-            //"MSSqlServer":
-            services.AddDbContext<MSSQLDbContext>(options => options.UseSqlServer(connectionString: mssqlConnectionString));
-            //"MySQL":
-            services.AddDbContext<ZunDbContext>(options => options.UseMySql(zunConnectionString, ServerVersion.AutoDetect(zunConnectionString)));
-            services.AddDbContext<TrazasDbContext>(options => options.UseMySql(trazasConnectionString, ServerVersion.AutoDetect(trazasConnectionString)));
-
-            services.AddTransient<IZunDbContext, ZunDbContext>();
-            services.AddTransient<ITrazasDbContext, TrazasDbContext>();
-
+            services = DbContextToServer(servidor, services, configuration);
             return services;
         }
 
@@ -202,5 +184,221 @@ namespace Zun.Aplicacion.IoC
 
             builder.Host.UseSerilog();
         }
+
+        #region Metodos Auxiliares
+        private static Action<IGlobalConfiguration> ConfigurarHangFire(string ts, IConfiguration configuration)
+        {
+            // definimos el tipo de servidor que nos llegó por parámetro
+            // desde la variable en nuestro appsettings
+            ETipoServidor tipoServidor = ts.Equals(ETipoServidor.MySql.ToString()) ? ETipoServidor.MySql : ETipoServidor.SqlServer;
+
+            // agregamos la seccion de Zun dependiendo del servidor
+            string? zunSection = tipoServidor == ETipoServidor.MySql ? "ConnectionStrings:MySqlZunContext" : "ConnectionStrings:SqlServerZunContext";
+            // agregamos la seccion de Trazas dependiendo del servidor
+            string? trazasSection = tipoServidor == ETipoServidor.MySql ? "ConnectionStrings:MySqlTrazasContext" : "ConnectionStrings:SqlServerTrazasContext";
+
+            string zunConnectionString = configuration.GetSection(zunSection).Value;
+            string trazasConnectionString = configuration.GetSection(trazasSection).Value;
+
+            switch (tipoServidor)
+            {
+                case ETipoServidor.MySql:
+                    // Configuramos para MySql
+                    return (configuration =>
+                    {
+                        IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
+                                            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                                            .UseSimpleAssemblyNameTypeSerializer()
+                                            .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                                            .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
+                        globalConfiguration
+                        .UseStorage(
+                            new MySqlStorage(
+                                zunConnectionString,
+                                new MySqlStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    TablesPrefix = "Hangfire",
+                                }
+                            )
+                        )
+                        .UseStorage(new MySqlStorage(
+                                trazasConnectionString,
+                                new MySqlStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    TablesPrefix = "Hangfire",
+                                }
+                            ));
+                    });
+
+                case ETipoServidor.SqlServer:
+                    // Configuramos para SqlServer
+                    zunConnectionString = zunConnectionString.Replace("Trust Server Certificate=true;", "");
+                    trazasConnectionString = trazasConnectionString.Replace("Trust Server Certificate=true;", "");
+                  
+                    return (configuration =>
+                    {
+                        IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
+                                            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                                            .UseSimpleAssemblyNameTypeSerializer()
+                                            .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                                            .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
+                        globalConfiguration
+                        .UseStorage(
+                            new SqlServerStorage(
+                                zunConnectionString,
+                                new SqlServerStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    SchemaName = "Hangfire",
+                                }
+                            )
+                        )
+                        .UseStorage(
+                            new SqlServerStorage(
+                                trazasConnectionString,
+                                new SqlServerStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    SchemaName = "Hangfire",
+                                }
+                            )
+                        );
+                    });
+
+                default:
+                    // Por defecto configuramos SqlServer
+                    return (configuration =>
+                    {
+                        IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
+                                            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                                            .UseSimpleAssemblyNameTypeSerializer()
+                                            .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                                            .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
+                        globalConfiguration
+                        .UseStorage(
+                            new SqlServerStorage(
+                                zunConnectionString,
+                                new SqlServerStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    SchemaName = "Hangfire",
+                                }
+                            )
+                        )
+                        .UseStorage(
+                            new SqlServerStorage(
+                                trazasConnectionString,
+                                new SqlServerStorageOptions
+                                {
+                                    QueuePollInterval = TimeSpan.FromSeconds(10),
+                                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                                    PrepareSchemaIfNecessary = true,
+                                    DashboardJobListLimit = 25000,
+                                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                                    SchemaName = "Hangfire",
+                                }
+                            )
+                        );
+                    });
+            }
+        }
+        /// <summary>
+        /// Definimos las bases de datos a usar, con sus DbContext
+        /// </summary>
+        /// <param name="ts"></param>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        private static IServiceCollection DbContextToServer(string ts, IServiceCollection services, IConfiguration configuration)
+        {
+            // Definimos el tipo de servidor
+            ETipoServidor tipoServidor = ts.Equals(ETipoServidor.MySql.ToString()) ? ETipoServidor.MySql : ETipoServidor.SqlServer;
+
+            IConfigurationSection? zunConnectionStringSection;
+            IConfigurationSection? trazasConnectionStringSection;
+
+            if (tipoServidor == ETipoServidor.MySql)
+            {
+                zunConnectionStringSection = configuration.GetSection("ConnectionStrings:MySqlZunContext");
+                trazasConnectionStringSection = configuration.GetSection("ConnectionStrings:MySqlTrazasContext");
+            }
+            else
+            {
+                zunConnectionStringSection = configuration.GetSection("ConnectionStrings:SqlServerZunContext");
+                trazasConnectionStringSection = configuration.GetSection("ConnectionStrings:SqlServerTrazasContext");
+            }
+
+            switch (tipoServidor)
+            {
+                case ETipoServidor.MySql:
+                    services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
+                    services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
+
+                    string zunConnectionStringMySql = zunConnectionStringSection.Value;
+                    string trazasConnectionStringMySql = trazasConnectionStringSection.Value;
+
+                    services.AddDbContext<TrazasDbContext>(options => options.UseMySql(trazasConnectionStringMySql, ServerVersion.AutoDetect(trazasConnectionStringMySql)));
+                    services.AddDbContext<ZunDbContext>(options => options.UseMySql(zunConnectionStringMySql, ServerVersion.AutoDetect(zunConnectionStringMySql)));
+
+                    break;
+
+                case ETipoServidor.SqlServer:
+                    services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
+                    services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
+
+                    string zunConnectionStringSqlServer = zunConnectionStringSection.Value.Replace("Trust Server Certificate=true;", ""); ;
+                    string trazasConnectionStringSqlServer = trazasConnectionStringSection.Value.Replace("Trust Server Certificate=true;", ""); ;
+
+                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: zunConnectionStringSqlServer));
+                    services.AddDbContext<TrazasDbContext>(options => options.UseSqlServer(connectionString: trazasConnectionStringSqlServer));
+
+                    break;
+                default:
+                    // Por defecto establecemos el SqlServer
+                    services.Configure<ConnectionStringSettings>(zunConnectionStringSection);
+                    services.Configure<ConnectionStringSettings>(trazasConnectionStringSection);
+
+                    string zunConnectionString = zunConnectionStringSection.Value.Replace("Trust Server Certificate=true;", ""); ;
+                    string trazasConnectionString = trazasConnectionStringSection.Value.Replace("Trust Server Certificate=true;", ""); ;
+
+                    services.AddDbContext<ZunDbContext>(options => options.UseSqlServer(connectionString: zunConnectionString));
+                    services.AddDbContext<TrazasDbContext>(options => options.UseSqlServer(connectionString: trazasConnectionString));
+                    break;
+            }
+
+            services.AddTransient<IZunDbContext, ZunDbContext>();
+            services.AddTransient<ITrazasDbContext, TrazasDbContext>();
+
+            return services;
+        }
+        #endregion
     }
 }

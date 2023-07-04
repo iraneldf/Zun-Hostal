@@ -2,7 +2,7 @@
 
 namespace Zun.Aplicacion.Dtos.EntidadEjemplo
 {
-    public class ModificarEntidadEjemploInputDto : EntitidadBaseDto
+    public class ModificarEntidadEjemploInputDto : EntidadBaseDto
     {
         public string Nombre { get; set; } = string.Empty;
         public int Edad { get; set; }

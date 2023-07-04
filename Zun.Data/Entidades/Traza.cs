@@ -1,6 +1,6 @@
 ﻿namespace Zun.Datos.Entidades
 {
-    public class Traza : EntitidadBase
+    public class Traza : EntidadBase
     {
         public string Descripcion { get; set; } = String.Empty;
         public string TablaBD { get; set; } = String.Empty;

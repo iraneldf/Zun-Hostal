@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 using Zun.Aplicacion.Dtos;
-using Zun.Aplicacion.Helper;
+using Zun.Aplicacion.Extensiones;
 using Zun.Datos.Entidades;
 using Zun.Dominio.Interfaces;
 
@@ -16,7 +16,7 @@ namespace Zun.Aplicacion.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
-    public class ControladorBase<TEntidad, TEntidadDto, CrearDto, ModificarDto, ElementoListadoPaginadoDto, FiltroListadoPaginadoDto> : ControllerBase where TEntidad : EntitidadBase where TEntidadDto : EntitidadBaseDto where ModificarDto : EntitidadBaseDto where FiltroListadoPaginadoDto : ConfiguracionListadoPaginadoDto
+    public class ControladorBase<TEntidad, TEntidadDto, CrearDto, ModificarDto, ElementoListadoPaginadoDto, FiltroListadoPaginadoDto> : ControllerBase where TEntidad : EntidadBase where TEntidadDto : EntidadBaseDto where ModificarDto : EntidadBaseDto where FiltroListadoPaginadoDto : ConfiguracionListadoPaginadoDto
     {
         protected readonly IMapper _mapper;
         protected readonly IServicioBase<TEntidad> _servicioBase;

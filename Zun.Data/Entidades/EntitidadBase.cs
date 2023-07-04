@@ -2,7 +2,7 @@
 
 namespace Zun.Datos.Entidades
 {
-    public class EntitidadBase
+    public class EntidadBase
     {
         [Key]
         public int Id { get; set; }

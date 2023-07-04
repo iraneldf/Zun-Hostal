@@ -1,8 +1,8 @@
-﻿namespace Zun.Aplicacion.Helper
+﻿namespace Zun.Aplicacion.Extensiones
 {
     public static class StringExtension
     {
-        public static string PrimeraLetraMayuscula(this Object objeto)
+        public static string PrimeraLetraMayuscula(this object objeto)
         {
             try
             {

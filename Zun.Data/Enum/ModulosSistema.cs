@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zun.Datos.ConfiguracionEntidades.Enum
+namespace Zun.Datos.Enum
 {
     public enum ModulosSistemaEnum
     {

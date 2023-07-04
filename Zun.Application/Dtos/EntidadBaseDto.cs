@@ -2,7 +2,7 @@
 
 namespace Zun.Aplicacion.Dtos
 {
-    public class EntitidadBaseDto
+    public class EntidadBaseDto
     {
         public int Id { get; set; }
     }

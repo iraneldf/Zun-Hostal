@@ -8,7 +8,7 @@ using Zun.Datos.IUnitOfWork.Interfaces;
 
 namespace Zun.Datos.IUnitOfWork.Repositorios
 {
-    public class RepositorioBase<TEntidad> : IRepositorioBase<TEntidad> where TEntidad : EntitidadBase
+    public class RepositorioBase<TEntidad> : IRepositorioBase<TEntidad> where TEntidad : EntidadBase
     {
         protected readonly ZunDbContext _context;
 

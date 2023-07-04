@@ -5,7 +5,7 @@ using Zun.Datos.Entidades;
 
 namespace Zun.Datos.IUnitOfWork.Interfaces
 {
-    public interface IRepositorioBase<TEntidad> where TEntidad : EntitidadBase
+    public interface IRepositorioBase<TEntidad> where TEntidad : EntidadBase
     {
         /// <summary>
         /// Agrega una nueva entidad

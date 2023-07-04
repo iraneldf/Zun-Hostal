@@ -5,7 +5,7 @@ using Zun.Datos.Entidades;
 
 namespace Zun.Dominio.Interfaces
 {
-    public interface IServicioBase<TEntidad> where TEntidad : EntitidadBase
+    public interface IServicioBase<TEntidad> where TEntidad : EntidadBase
     {
         /// <summary>
         /// Modifica los datos del elemento con el mismo id pasado por parametro
