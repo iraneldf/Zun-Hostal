@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Zun.Aplicacion.AuthorizationFilter;
 using Zun.Aplicacion.Mapper;
+using Zun.Datos.ConfiguracionEntidades;
 using Zun.Datos.DbContexts;
 using Zun.Datos.Enum;
 using Zun.Datos.IUnitOfWork;
@@ -41,7 +42,10 @@ namespace Zun.Aplicacion.IoC
         public static IServiceCollection RegistrarServicios(this IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers()
+
+            //Para visualizar en los json los enum
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -50,18 +54,9 @@ namespace Zun.Aplicacion.IoC
 
             services.AddHttpContextAccessor();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAnyCorsPolicy", builder =>
-                {
-                    builder.AllowAnyHeader();
-                    builder.AllowAnyOrigin();
-                    builder.AllowAnyMethod();
-                });
-            });
+            services.AddCors();
 
             //Add services to validation
-
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<Program>();
@@ -82,7 +77,7 @@ namespace Zun.Aplicacion.IoC
             // Si alguien no escribió correctamente en el appsetings el servidor,
             // este se configura por defecto para SqlServer
             if (!servidor.Equals(ETipoServidor.MySql.ToString())
-                || !servidor.Equals(ETipoServidor.SqlServer.ToString()))
+                && !servidor.Equals(ETipoServidor.SqlServer.ToString()))
             {
                 servidor = ETipoServidor.SqlServer.ToString();
             }
@@ -101,7 +96,6 @@ namespace Zun.Aplicacion.IoC
                     Title = "ZUN API",
                     Description = "API para realizar las operaciones del sistema"
                 });
-
                 // using System.Reflection;
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -116,21 +110,15 @@ namespace Zun.Aplicacion.IoC
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-
             app.UseHttpsRedirection();
-
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.UseHangfireDashboard(options: new DashboardOptions
             {
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             });
-
             app.Run();
-
             return app;
         }
 
@@ -142,7 +130,7 @@ namespace Zun.Aplicacion.IoC
             // Si alguien no escribió correctamente en el appsetings el servidor,
             // este se configura por defecto para SqlServer
             if (!servidor.Equals(ETipoServidor.MySql.ToString())
-                || !servidor.Equals(ETipoServidor.SqlServer.ToString()))
+                && !servidor.Equals(ETipoServidor.SqlServer.ToString()))
             {
                 servidor = ETipoServidor.SqlServer.ToString();
             }
@@ -154,8 +142,11 @@ namespace Zun.Aplicacion.IoC
         public static IServiceCollection RegistrarRepositorios(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
+            services.AddScoped<ICamareroRepositorio, CamareroRepositorio>();
+            services.AddScoped<IModificadorRepositorio, ModificadorRepositorio>();
             services.AddScoped<IEntidadEjemploRepositorio, EntidadEjemploRepositorio>();
-            services.AddScoped<ITrazasDbContext, TrazasDbContext>();
+            services.AddScoped<ITrazasRepositorio, TrazasRepositorio>();
+      
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
@@ -165,6 +156,9 @@ namespace Zun.Aplicacion.IoC
         {
             services.AddScoped(typeof(IServicioBase<>), typeof(ServicioBase<>));
             services.AddScoped<IEntidadEjemploServicio, EntidadEjemploServicio>();
+            services.AddScoped<ICamareroServicio, CamareroServicio>();
+            services.AddScoped<IModificadorServicio, ModificadorServicio>();
+            services.AddScoped<ITrazaServicio, TrazaServicio>();
 
             return services;
         }
@@ -192,9 +186,8 @@ namespace Zun.Aplicacion.IoC
             // desde la variable en nuestro appsettings
             ETipoServidor tipoServidor = ts.Equals(ETipoServidor.MySql.ToString()) ? ETipoServidor.MySql : ETipoServidor.SqlServer;
 
-            // agregamos la seccion de Zun dependiendo del servidor
+            // agregamos la seccion de Zun y Trazas dependiendo del servidor
             string? zunSection = tipoServidor == ETipoServidor.MySql ? "ConnectionStrings:MySqlZunContext" : "ConnectionStrings:SqlServerZunContext";
-            // agregamos la seccion de Trazas dependiendo del servidor
             string? trazasSection = tipoServidor == ETipoServidor.MySql ? "ConnectionStrings:MySqlTrazasContext" : "ConnectionStrings:SqlServerTrazasContext";
 
             string zunConnectionString = configuration.GetSection(zunSection).Value;
@@ -203,7 +196,6 @@ namespace Zun.Aplicacion.IoC
             switch (tipoServidor)
             {
                 case ETipoServidor.MySql:
-                    // Configuramos para MySql
                     return (configuration =>
                     {
                         IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
@@ -243,7 +235,6 @@ namespace Zun.Aplicacion.IoC
                     });
 
                 case ETipoServidor.SqlServer:
-                    // Configuramos para SqlServer
                     zunConnectionString = zunConnectionString.Replace("Trust Server Certificate=true;", "");
                     trazasConnectionString = trazasConnectionString.Replace("Trust Server Certificate=true;", "");
                   
@@ -288,7 +279,7 @@ namespace Zun.Aplicacion.IoC
                     });
 
                 default:
-                    // Por defecto configuramos SqlServer
+                    // Por defecto se configura SqlServer
                     return (configuration =>
                     {
                         IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
