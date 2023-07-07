@@ -2,17 +2,19 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zun.Datos.DbContexts;
 
 #nullable disable
 
-namespace Zun.Datos.Migrations.TrazasDb
+namespace Zun.Datos.Migrations
 {
     [DbContext(typeof(TrazasDbContext))]
-    partial class TrazasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230707220318_TrazasMigracion1")]
+    partial class TrazasMigracion1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +63,7 @@ namespace Zun.Datos.Migrations.TrazasDb
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Trazas", (string)null);
+                    b.ToTable("zunapplication", (string)null);
                 });
 #pragma warning restore 612, 618
         }

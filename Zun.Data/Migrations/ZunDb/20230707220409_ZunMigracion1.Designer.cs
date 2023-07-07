@@ -11,8 +11,8 @@ using Zun.Datos.DbContexts;
 namespace Zun.Datos.Migrations.ZunDb
 {
     [DbContext(typeof(ZunDbContext))]
-    [Migration("20221222154457_Inicial")]
-    partial class Inicial
+    [Migration("20230707220409_ZunMigracion1")]
+    partial class ZunMigracion1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,7 +61,7 @@ namespace Zun.Datos.Migrations.ZunDb
                     b.HasIndex("Nombre")
                         .IsUnique();
 
-                    b.ToTable("EntidadEjemplo", null, t => t.ExcludeFromMigrations());
+                    b.ToTable("EntidadEjemplo", (string)null);
                 });
 #pragma warning restore 612, 618
         }

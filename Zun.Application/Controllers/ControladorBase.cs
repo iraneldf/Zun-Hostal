@@ -10,6 +10,7 @@ using Zun.Aplicacion.Dtos;
 using Zun.Aplicacion.Extensiones;
 using Zun.Datos.Entidades;
 using Zun.Dominio.Interfaces;
+using log4net;
 
 namespace Zun.Aplicacion.Controllers
 {
@@ -18,6 +19,8 @@ namespace Zun.Aplicacion.Controllers
     //[Authorize]
     public class ControladorBase<TEntidad, TEntidadDto, CrearDto, ModificarDto, ElementoListadoPaginadoDto, FiltroListadoPaginadoDto> : ControllerBase where TEntidad : EntidadBase where TEntidadDto : EntidadBaseDto where ModificarDto : EntidadBaseDto where FiltroListadoPaginadoDto : ConfiguracionListadoPaginadoDto
     {
+
+        public static readonly ILog _log = LogManager.GetLogger(typeof(TEntidad));
         protected readonly IMapper _mapper;
         protected readonly IServicioBase<TEntidad> _servicioBase;
         protected readonly IBackgroundJobClient _clientHangfire;
@@ -36,6 +39,7 @@ namespace Zun.Aplicacion.Controllers
         /// </summary>
         /// <response code="200">Retorna listado de elementos</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
+        
         [HttpGet("[action]")]
         public virtual async Task<IActionResult> ObtenerTodos()
         {
@@ -47,6 +51,7 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error obteniendo todos los elementos: {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -86,10 +91,12 @@ namespace Zun.Aplicacion.Controllers
 
                     mensaje = $"Ya existe {campo} con ese valor.";
                 }
+                 _log.ErrorFormat("Error insertando un elemento: {0}", mensaje);
                 return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = mensaje });
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error insertando un elemento: {0}", ex.InnerException?.Message ?? ex.Message);
                 return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
 
             }
@@ -102,17 +109,28 @@ namespace Zun.Aplicacion.Controllers
         /// <param name="modificarDto">elemento a modificar</param>
         /// <response code="200">Retorna el elemento modificado</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
+        
         [HttpPut("[action]/{id}")]
         public virtual async Task<IActionResult> Modificar(int id, ModificarDto modificarDto)
         {
             try
             {
                 if (id != modificarDto.Id)
-                return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = "Erro na atualização" });
+                {
+                    _log.ErrorFormat("Error actualizando el elemento con id " + id + ": {0}", "Error en la actualización. No existe el elemento a editar");
+                    return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = "Error actualizando" });
+                }
 
                 TEntidad? entidadOriginal = await _servicioBase.ObtenerPorId(id);
 
+                if (entidadOriginal == null)
+                {
+                    _log.ErrorFormat("Error actualizando el elemento con id " + id + ": {0}", "Error en la actualización. No existe el elemento a editar");
+                    return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = "Error en la actualización. No existe el elemento a editar" });
+                }
+
                 TEntidad entity = _mapper.Map<TEntidad>(modificarDto);
+                //entity.FechaCreacion = entidadOriginal.FechaCreacion;
                 EntityEntry<TEntidad> result = _servicioBase.Modificar(entity);
                 await _servicioBase.SaveChanges();
 
@@ -135,10 +153,12 @@ namespace Zun.Aplicacion.Controllers
 
                     mensaje = $"Ya existe {campo} con ese valor.";
                 }
+                _log.ErrorFormat("Error actualizando el elemento con id " + id + ": {0}", mensaje);
                 return base.BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = mensaje });
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error actualizando el elemento con id " + id + ": {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -149,6 +169,8 @@ namespace Zun.Aplicacion.Controllers
         /// <param name="configuracionPaginadoDto">configuracion de paginacion</param>
         /// <response code="200">Retorna un listado paginado de elementos</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
+
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("[action]")]
         public virtual async Task<IActionResult> ObtenerListadoPaginado([FromQuery] FiltroListadoPaginadoDto configuracionPaginadoDto)
         {
@@ -166,6 +188,7 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error obteniendo el listado paginado: {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -178,6 +201,7 @@ namespace Zun.Aplicacion.Controllers
         /// <response code="200">Retorna un elemento</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
         /// <response code="404">Retorna el mensaje de error cuando no se encuentra el elemento</response>
+        
         [HttpGet("[action]/{id}")]
         public virtual async Task<IActionResult> ObtenerPorId(int id)
         {
@@ -194,6 +218,7 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error obteniendo el elemento con id " + id + ": {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -227,7 +252,71 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error eliminando elementos: {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Elimina los elementos que contienen los ids pasados por parametro
+        /// </summary>
+        /// <param name="ids">Ids de los elementos que se desean eliminar</param>
+        /// <response code="200">Retorna los elementos eliminados</response>
+        /// <response code="400">Retorna el mensaje del error ocurrido</response>
+
+        [HttpDelete("[action]")]
+        public virtual async Task<IActionResult> EliminarElementos(List<int> ids)
+        {
+            try
+            {
+                try
+                {
+                    await _servicioBase.IniciarTransaccion();
+
+                    List<TEntidad> results = new List<TEntidad>();
+                    foreach (int id in ids)
+                    {
+                        EntityEntry<TEntidad> result = await _servicioBase.Eliminar(id);
+                        results.Add(result.Entity);
+                    }
+                    await _servicioBase.SaveChanges();
+                    await _servicioBase.CommitTransaccion();
+
+                    //agregando tarea a la cola para ejecutarla en segundo plano
+                    _clientHangfire.Enqueue<IServicioBase<TEntidad>>(servicioBase =>
+                   servicioBase.GuardarTraza(
+                                       usuario,
+                                       $"Se han eliminado los elementos con ids = {String.Join(", ", (results.Select(x => x.Id).ToList()))} en {typeof(TEntidad).Name}",
+                                       typeof(TEntidad).Name,
+                                       results,
+                                       null));
+                    return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Resultado = results });
+                }
+                catch (DbUpdateException ex)
+                {
+                    string mensaje = "El elemento " + ex.Entries[0] + " no puede ser eliminado porque está siendo usado";
+                    _log.ErrorFormat("Error eliminando elementos: {0}", mensaje);
+                    return BadRequest(new ResponseDto { Status = StatusCodes.Status401Unauthorized, MensajeError = mensaje });
+                }
+                catch (Exception e)
+                {
+                    await _servicioBase.RollbackTransaccion();
+                    _log.ErrorFormat("Error eliminando elementos: {0}", e.InnerException?.Message ?? e.Message);
+                    return BadRequest(new ResponseDto
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        MensajeError = e.InnerException?.Message ?? e.Message
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.ErrorFormat("Error eliminando elementos: {0}", ex.InnerException?.Message ?? ex.Message);
+                return BadRequest(new ResponseDto
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    MensajeError = ex.InnerException?.Message ?? ex.Message
+                });
             }
         }
 
@@ -239,8 +328,9 @@ namespace Zun.Aplicacion.Controllers
         /// <param name="nombreCampoValor">Nombre del campo que se tomara para obtener el valor del elemento seleccionado</param>
         /// <response code="200">Retorna listao de elementos para incluirlos en un dropdown</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
+        
         [HttpGet("[action]")]
-        public virtual async Task<IActionResult> ObtenetElementosParaDropdown([FromQuery] string nombreCampoValor, [FromQuery] string nombreCampoTexto, [FromQuery] string? valorSeleccionado)
+        public virtual async Task<IActionResult> ObtenerElementosParaDropdown([FromQuery] string nombreCampoValor, [FromQuery] string nombreCampoTexto, [FromQuery] string? valorSeleccionado)
         {
             try
             {
@@ -251,6 +341,7 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error obteniendo elementos para dropdown: {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -264,8 +355,9 @@ namespace Zun.Aplicacion.Controllers
         /// <response code="200">Retorna un elemento eliminado</response>
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
         /// <response code="404">Retorna el mensaje de error cuando no se encuentra el elemento</response>
-        [HttpGet("GetForEdit/{id}")]
-        public virtual async Task<IActionResult> ObetenerElementoParaEditar(int id)
+        
+        [HttpGet("[action]/{id}")]
+        public virtual async Task<IActionResult> ObtenerElementoParaEditar(int id)
         {
             try
             {
@@ -280,6 +372,7 @@ namespace Zun.Aplicacion.Controllers
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error obteniendo el elemento para editar con id " + id + ": {0}", ex.InnerException?.Message ?? ex.Message);
                 return BadRequest(new ResponseDto { Status = StatusCodes.Status400BadRequest, MensajeError = ex.InnerException?.Message ?? ex.Message });
             }
         }
@@ -289,6 +382,7 @@ namespace Zun.Aplicacion.Controllers
         /// El elemento sera retornado solo con los campos que seran modificados
         /// </summary>
         /// <param name="filtro">filtro y configuracion para el paginado</param>
+        
         protected virtual Task<(IEnumerable<TEntidad>, int)> AplicarFiltros(FiltroListadoPaginadoDto filtro)
         {
             return _servicioBase.ObtenerListadoPaginado(filtro.CantIgnorar, filtro.CantMostrar);

@@ -142,8 +142,6 @@ namespace Zun.Aplicacion.IoC
         public static IServiceCollection RegistrarRepositorios(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
-            services.AddScoped<ICamareroRepositorio, CamareroRepositorio>();
-            services.AddScoped<IModificadorRepositorio, ModificadorRepositorio>();
             services.AddScoped<IEntidadEjemploRepositorio, EntidadEjemploRepositorio>();
             services.AddScoped<ITrazasRepositorio, TrazasRepositorio>();
       
@@ -156,8 +154,6 @@ namespace Zun.Aplicacion.IoC
         {
             services.AddScoped(typeof(IServicioBase<>), typeof(ServicioBase<>));
             services.AddScoped<IEntidadEjemploServicio, EntidadEjemploServicio>();
-            services.AddScoped<ICamareroServicio, CamareroServicio>();
-            services.AddScoped<IModificadorServicio, ModificadorServicio>();
             services.AddScoped<ITrazaServicio, TrazaServicio>();
 
             return services;

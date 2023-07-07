@@ -59,7 +59,7 @@ namespace Zun.Datos.Migrations.ZunDb
                     b.HasIndex("Nombre")
                         .IsUnique();
 
-                    b.ToTable("EntidadEjemplo", null, t => t.ExcludeFromMigrations());
+                    b.ToTable("EntidadEjemplo", (string)null);
                 });
 #pragma warning restore 612, 618
         }

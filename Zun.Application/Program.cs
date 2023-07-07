@@ -2,6 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Zun.Aplicacion.IoC;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using log4net.Config;
+
+//Se configuran los log del sistema con la librería Log4Net
+XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
 var builder = WebApplication.CreateBuilder(args);
 

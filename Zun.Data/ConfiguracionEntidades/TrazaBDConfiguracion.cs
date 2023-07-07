@@ -10,7 +10,7 @@ namespace Zun.Datos.ConfiguracionEntidades
             #region Configurando Entidad
             BDConfiguracionBase<Traza>.SetEntityBuilder(modelBuilder);
 
-            modelBuilder.Entity<Traza>().ToTable("Trazas");
+            modelBuilder.Entity<Traza>().ToTable("zunapplication");
             modelBuilder.Entity<Traza>().Property(e => e.Descripcion).IsRequired();           
             modelBuilder.Entity<Traza>().Property(e => e.TablaBD).HasMaxLength(100).IsRequired();           
             modelBuilder.Entity<Traza>().Property(e => e.Elemento).IsRequired();           

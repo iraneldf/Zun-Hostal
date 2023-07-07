@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Zun.Datos.Migrations.TrazasDb
+namespace Zun.Datos.Migrations
 {
-    public partial class Inicial : Migration
+    public partial class TrazasMigracion1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,7 @@ namespace Zun.Datos.Migrations.TrazasDb
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Trazas",
+                name: "zunapplication",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -36,13 +36,13 @@ namespace Zun.Datos.Migrations.TrazasDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Trazas", x => x.Id);
+                    table.PrimaryKey("PK_zunapplication", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trazas_Id",
-                table: "Trazas",
+                name: "IX_zunapplication_Id",
+                table: "zunapplication",
                 column: "Id",
                 unique: true);
         }
@@ -50,7 +50,7 @@ namespace Zun.Datos.Migrations.TrazasDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Trazas");
+                name: "zunapplication");
         }
     }
 }
