@@ -1,15 +1,19 @@
-﻿namespace API.Application.Dtos.Comunes
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.Application.Dtos.Comunes
 {
     public class ObtenerSelectListInputDto
     {
         /// <summary>
         /// Nombre del campo que se usuara para definir el valor del item
         /// </summary>
-        public string NombreCampoValor { get; set; } = string.Empty;
+        [Required]
+        public required string NombreCampoValor { get; set; }
         /// <summary>
         /// Nombre del campo que se usará para mostrar los items
         /// </summary>
-        public string NombreCampoTexto { get; set; } = string.Empty;
+        [Required]
+        public required string NombreCampoTexto { get; set; }
         /// <summary>
         /// Valor del item que aparecerá seleccionado
         /// </summary>

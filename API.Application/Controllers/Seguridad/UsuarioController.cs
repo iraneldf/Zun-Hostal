@@ -10,7 +10,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Web.Helpers;
 
 namespace API.Application.Controllers.Seguridad
 {
@@ -46,7 +45,7 @@ namespace API.Application.Controllers.Seguridad
                 if (User.Identity?.Name == usuario.Username)
                     throw new CustomException { Status = StatusCodes.Status401Unauthorized, Message = "El usuario no tiene permisos para realizar esta acción." };
 
-                if (!Crypto.VerifyHashedPassword(usuario.Contrasenna, cambiarContrasennaDto.ContrasennaAntigua))
+                if (usuario.Contrasenna.GetHashCode().ToString() != cambiarContrasennaDto.ContrasennaAntigua)
                     throw new CustomException { Status = StatusCodes.Status500InternalServerError, Message = "La contraseña antigua es incorrecta." };
 
                 await ((IUsuarioService)_servicioBase).CambiarContrasenna(cambiarContrasennaDto.UsuarioId, cambiarContrasennaDto.NuevaContrasenna);
@@ -75,10 +74,10 @@ namespace API.Application.Controllers.Seguridad
             return _servicioBase.ObtenerListadoPaginado(inputDto.CantidadIgnorar, inputDto.CantidadMostrar, inputDto.SecuenciaOrdenamiento, null, filtros.ToArray());
         }
 
-        protected override async Task<Usuario?> ObtenerElementoPorId(Guid id) 
+        protected override async Task<Usuario?> ObtenerElementoPorId(Guid id)
             => await _servicioBase.ObtenerPorId(id, propiedadesIncluidas: query => query.Include(e => e.Rol));
 
-        protected override async Task<IEnumerable<DetallesUsuarioDto>> ObtenerTodosElementos(string? secuenciaOrdenamiento = null) 
+        protected override async Task<IEnumerable<DetallesUsuarioDto>> ObtenerTodosElementos(string? secuenciaOrdenamiento = null)
             => _mapper.Map<IEnumerable<DetallesUsuarioDto>>(await _servicioBase.ObtenerTodos(secuenciaOrdenamiento, propiedadesIncluidas: query => query.Include(e => e.Rol)));
     }
 }

@@ -4,19 +4,17 @@ using API.Data.IUnitOfWorks.Interfaces;
 using API.Domain.Exceptions;
 using API.Domain.Extensions;
 using API.Domain.Interfaces;
-using API.Domain.Validators.Seguridad;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
 namespace API.Domain.Services
 {
-    public class BasicService<TEntity, TEntityValidator> : IBaseService<TEntity, TEntityValidator> where TEntity : EntidadBase where TEntityValidator: AbstractValidator<TEntity>
+    public class BasicService<TEntity, TEntityValidator> : IBaseService<TEntity, TEntityValidator> where TEntity : EntidadBase where TEntityValidator : AbstractValidator<TEntity>
     {
         protected readonly IUnitOfWork<TEntity> _repositorios;
         protected readonly IHttpContextAccessor _httpContext;

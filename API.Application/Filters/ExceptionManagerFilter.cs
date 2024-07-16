@@ -1,15 +1,16 @@
 ﻿using API.Application.Dtos.Comunes;
 using API.Domain.Exceptions;
 using FluentValidation;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace API.Application.Filters
 {
     public class ExceptionManagerFilter : IExceptionFilter
     {
+        private static readonly ILog _logger = LogManager.GetLogger("");
         private readonly IWebHostEnvironment _environment;
 
         public ExceptionManagerFilter(IWebHostEnvironment environment)
@@ -49,7 +50,7 @@ namespace API.Application.Filters
                 }
 
             //Guardando el log en BD
-            Log.Error(context.Exception, text);
+            _logger.ErrorFormat(context.Exception.ToString());
         }
 
     }
