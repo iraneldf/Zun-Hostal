@@ -2,14 +2,13 @@
 using API.Application.Dtos.Seguridad.Autenticacion;
 using API.Application.Filters;
 using API.Data.Entidades.Seguridad;
-using API.Domain.Interfaces;
 using API.Domain.Interfaces.Seguridad;
-using API.Domain.Validators.Seguridad;
 using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Application.Controllers.Seguridad
 {
@@ -17,7 +16,7 @@ namespace API.Application.Controllers.Seguridad
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ExceptionManagerFilter))]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class AutenticacionController : ControllerBase
     {
         protected readonly IMapper _mapper;
@@ -48,19 +47,19 @@ namespace API.Application.Controllers.Seguridad
         /// <response code="400">Retorna el mensaje del error ocurrido</response>
         [HttpPost("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody] LoginInputDto login)
+        public ActionResult Login()
         {
-            if (await _autenticacionServicio.Login(login.Username, login.Contrasenna))
-            {
-                (string token, DateTime fechaExpiracion) = await _autenticacionServicio.ConstruirToken(login.Username);
+            string? authHeader = HttpContext.Request.Headers["Authorization"];
+            if (string.IsNullOrWhiteSpace(authHeader))
+               return Unauthorized(new ResponseDto { Status = StatusCodes.Status401Unauthorized, ErrorMessage = "Error al iniciar sesión." });
 
-                await _usuarioService.GuardarTraza(login.Username, $"{login.Username} ha inciado sesion.", "Sesion");
+            string token = authHeader.Replace("Bearer ", "");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
 
-                LoginOutputDto result = new() { FechaExpiracion = fechaExpiracion, Token = token };
-                return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Result = result });
-            }
-            else
-                return Unauthorized(new ResponseDto { Status = StatusCodes.Status401Unauthorized, ErrorMessage = "Usuario o contraseña no válido." });
+            bool result = HttpContext.User.Identity?.IsAuthenticated ?? false;
+
+            return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Result = result });
         }
     }
 }

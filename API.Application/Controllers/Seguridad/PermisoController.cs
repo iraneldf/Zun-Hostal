@@ -14,7 +14,7 @@ namespace API.Application.Controllers.Seguridad
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ExceptionManagerFilter))]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class PermisoController : Controller
     {
         protected readonly IPermisoService _servicioPermiso;
