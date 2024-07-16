@@ -1,11 +1,12 @@
 using API.Data.Entidades.Seguridad;
 using API.Domain.Interfaces.Seguridad;
 using API.Domain.Services.Seguridad;
+using API.Domain.Validators.Seguridad;
 
 namespace API.Test.Tests
 {
     [TestClass]
-    public class APIControllerTests : BasicTest<Usuario>
+    public class APIControllerTests : BasicTest<Usuario, UsuarioValidator>
     {
         private readonly IUsuarioService _servicioUsuario;
 

@@ -160,7 +160,12 @@ namespace API.Application.IoC
 
         public static IServiceCollection RegistrarDataContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("APIContext")));
+            string databaseType = configuration["DatabaseType"] ?? "MSSqlServer";
+
+            if(databaseType == "MSSqlServer")
+                services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("APIContext")));
+            else if (databaseType == "MySqlServer")
+                services.AddDbContext<ApiDbContext>(options => options.UseMySql(configuration.GetConnectionString("APIContext"), ServerVersion.AutoDetect(configuration.GetConnectionString("APIContext"))));
 
             services.AddTransient<IApiDbContext, ApiDbContext>();
 
