@@ -1,0 +1,5 @@
+* FLUENT VALIDATION
+ https://docs.fluentvalidation.net/en/latest/built-in-validators.html
+
+ * AUTOMAPPER
+ https://docs.automapper.org/en/stable/index.html

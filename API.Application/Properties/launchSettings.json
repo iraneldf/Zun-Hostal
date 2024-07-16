@@ -1,0 +1,33 @@
+{
+  "profiles": {
+    "API.Application": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SecretKey": "APSKP3KP4234KP2423K4as5r54ewwT5H5df12f15HG5h1g51hads6G6e16h16ryj1t61561h51vb51n8tyj51g5fn1f6P234K2P34K23P4K234K23423K42P35r1g5e15151rr2r15r1rr5"
+      },
+      "applicationUrl": "https://localhost:7208;http://localhost:5208",
+      "dotnetRunMessages": true
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SecretKey": "APSKP3KP4234KP2423K515d1f1h9f16fgb15rt189as1w51gj1jkk5yuo1ui1uil1b1as61da1dfew1rr51yet1ury1gj1,y1yi9o18io11c1vas65v16e1y91rj9y1uk34K23423K42P3"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:45832",
+      "sslPort": 44368
+    }
+  }
+}
