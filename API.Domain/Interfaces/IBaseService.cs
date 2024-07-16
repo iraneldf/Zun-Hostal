@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
-using System.Web.WebPages;
 
 namespace API.Domain.Interfaces
 {
-    public interface IBaseService<TEntity, TEntityValidator> where TEntity : EntidadBase where TEntityValidator: AbstractValidator<TEntity>
+    public interface IBaseService<TEntity, TEntityValidator> where TEntity : EntidadBase where TEntityValidator : AbstractValidator<TEntity>
     {
         /// <summary>
         /// Actualiza los datos de un elemento

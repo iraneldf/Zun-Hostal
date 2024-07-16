@@ -10,7 +10,7 @@ namespace API.Application.Filters
 {
     public class ExceptionManagerFilter : IExceptionFilter
     {
-        private static readonly ILog _logger = LogManager.GetLogger("Error");
+        private static readonly ILog _logger = LogManager.GetLogger("");
         private readonly IWebHostEnvironment _environment;
 
         public ExceptionManagerFilter(IWebHostEnvironment environment)
@@ -50,7 +50,7 @@ namespace API.Application.Filters
                 }
 
             //Guardando el log en BD
-            _logger.ErrorFormat("Ha ocurrido un error en el sistema.", context.Exception);
+            _logger.ErrorFormat(context.Exception.ToString());
         }
 
     }

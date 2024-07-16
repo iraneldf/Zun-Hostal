@@ -1,19 +1,16 @@
 ﻿using API.Application.Dtos.Comunes;
 using API.Application.Dtos.Seguridad.Rol;
-using API.Application.Filters;
-using API.Application.Validadotors.Seguridad;
 using API.Data.Entidades.Seguridad;
 using API.Domain.Interfaces.Seguridad;
 using API.Domain.Validators.Seguridad;
 using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace API.Application.Controllers.Seguridad
 {
-    
+
     public class RolController : BasicController<Rol, RolValidator, DetallesRolDto, CrearRolInputDto, ActualizarRolInputDto, ListadoPaginadoRolDto, FiltrarConfigurarListadoPaginadoRolIntputDto>
     {
         private readonly IRolPermisoService _rolPermisoService;
@@ -59,10 +56,10 @@ namespace API.Application.Controllers.Seguridad
             return _servicioBase.ObtenerListadoPaginado(inputDto.CantidadIgnorar, inputDto.CantidadMostrar, inputDto.SecuenciaOrdenamiento, null, filtros.ToArray());
         }
 
-        protected override async Task<Rol?> ObtenerElementoPorId(Guid id) 
+        protected override async Task<Rol?> ObtenerElementoPorId(Guid id)
             => await _servicioBase.ObtenerPorId(id, propiedadesIncluidas: query => query.Include(e => e.RolPermiso).ThenInclude(e => e.Permiso));
 
-        protected override async Task<IEnumerable<DetallesRolDto>> ObtenerTodosElementos(string? secuenciaOrdenamiento = null) 
+        protected override async Task<IEnumerable<DetallesRolDto>> ObtenerTodosElementos(string? secuenciaOrdenamiento = null)
             => _mapper.Map<IEnumerable<DetallesRolDto>>(await _servicioBase.ObtenerTodos(secuenciaOrdenamiento, propiedadesIncluidas: query => query.Include(e => e.RolPermiso).ThenInclude(e => e.Permiso)));
     }
 }

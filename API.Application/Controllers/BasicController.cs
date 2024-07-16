@@ -5,7 +5,6 @@ using API.Domain.Exceptions;
 using API.Domain.Interfaces;
 using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,7 +15,7 @@ namespace API.Application.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ExceptionManagerFilter))]
-   // [Authorize]
+    [Authorize]
     public class BasicController<TEntity, TEntityValidator, TEntityDto, CrearDto, ActualizarDto, ElementoListadoPaginadoDto, FiltrarConfigurarListadoPaginadoDto> : ControllerBase where TEntity : EntidadBase where TEntityValidator : AbstractValidator<TEntity> where TEntityDto : EntidadBaseDto where ActualizarDto : EntidadBaseDto where FiltrarConfigurarListadoPaginadoDto : ConfiguracionListadoPaginadoDto
     {
         protected string? usuario;
@@ -236,7 +235,5 @@ namespace API.Application.Controllers
             await _servicioBase.SalvarCambios();
             return result;
         }
-
-
     }
 }

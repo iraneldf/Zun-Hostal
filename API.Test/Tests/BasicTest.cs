@@ -9,7 +9,6 @@ using API.Domain.Interfaces;
 using API.Domain.Services;
 using AutoMapper;
 using FluentValidation;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -20,22 +19,17 @@ namespace API.Test.Tests
         private readonly ApiDbContext _context;
         protected readonly IMapper _mapper;
         protected readonly IBaseService<TEntity, TEntityValidator> _basicService;
-        protected readonly IBackgroundJobClient _clientHangfire;
         protected readonly IUnitOfWork<TEntity> _repositories;
         protected readonly IBaseRepository<TEntity> _basicRepository;
-        protected readonly IRecurringJobManager _recurringJobManager;
 
         public BasicTest()
         {
-            ConfigureHangfire();
             _mapper = ConfigureAutoMapper();
             _context = DbContextBuild();
 
             _basicService = new BasicService<TEntity, TEntityValidator>(new UnitOfWork<TEntity>(_context), null);
             _repositories = new UnitOfWork<TEntity>(_context);
             _basicRepository = new BaseRepository<TEntity>(_context);
-            _clientHangfire = new BackgroundJobClient();
-            _recurringJobManager = new RecurringJobManager();
             DbInitialize().GetAwaiter();
         }
 
@@ -54,14 +48,7 @@ namespace API.Test.Tests
             return null;
         }
 
-        private void ConfigureHangfire()
-        {
-            GlobalConfiguration.Configuration
-                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                                    .UseSimpleAssemblyNameTypeSerializer()
-                                    .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
-                                    .UseFilter(new AutomaticRetryAttribute { Attempts = 2 }).UseInMemoryStorage();
-        }
+       
         private async Task DbInitialize()
         {
             //adding API in DB

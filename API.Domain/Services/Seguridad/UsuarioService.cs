@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Web.Helpers;
 
 namespace API.Domain.Services.Seguridad
 {
@@ -27,7 +26,7 @@ namespace API.Domain.Services.Seguridad
             //para comprobar el pass usar la funcion VerifyHashedPassword pasandole por parametros
             //el texto generado y el texto plano a verificar
 
-            entity.Contrasenna = Crypto.HashPassword(entity.Contrasenna);
+            entity.Contrasenna = entity.Contrasenna.GetHashCode().ToString();
 
             await ValidarAntesCrear(entity);
 
@@ -51,7 +50,7 @@ namespace API.Domain.Services.Seguridad
             Usuario? usuario = await ObtenerPorId(usuarioId) ??
                 throw new CustomException() { Status = StatusCodes.Status404NotFound, Message = "Elemento no encontrado." };
 
-            usuario.Contrasenna = Crypto.HashPassword(nuevaContrasenna);
+            usuario.Contrasenna = nuevaContrasenna.GetHashCode().ToString();
             usuario.DebeCambiarContrasenna = debeCambiarContrasenna;
 
             await base.Actualizar(usuario);
@@ -75,6 +74,6 @@ namespace API.Domain.Services.Seguridad
         public async Task<Usuario?> ObtenerPorUsername(string username, Func<IQueryable<Usuario>, IIncludableQueryable<Usuario, object>>? propiedadesIncluidas = null) => await _repositorios.BasicRepository.FirstAsync(entity => entity.Username == username, propiedadesIncluidas);
 
         public async Task<List<Permiso>> ObtenerPermisos(string username)
-            => (await _repositorios.Usuarios.FirstAsync(e => e.Username == username, query=> query.Include(e=>e.Rol.RolPermiso).ThenInclude(e=>e.Permiso)))?.Rol.RolPermiso.Select(e => e.Permiso).ToList() ?? new();
+            => (await _repositorios.Usuarios.FirstAsync(e => e.Username == username, query => query.Include(e => e.Rol.RolPermiso).ThenInclude(e => e.Permiso)))?.Rol.RolPermiso.Select(e => e.Permiso).ToList() ?? new();
     }
 }

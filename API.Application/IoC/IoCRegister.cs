@@ -10,16 +10,11 @@ using API.Domain.Services;
 using API.Domain.Services.Seguridad;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Hangfire;
 using IdentityModel.AspNetCore.OAuth2Introspection;
 using log4net.Config;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using System.Reflection;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace API.Application.IoC
@@ -34,8 +29,7 @@ namespace API.Application.IoC
             services.RegistrarRepositorios();
             services.RegistrarServiciosDominio();
             services.RegistrarSwagger();
-            services.RegistrarHangfire();
-            ConfigurarLog4Net();     
+            ConfigurarLog4Net();
 
             return services;
         }
@@ -82,22 +76,6 @@ namespace API.Application.IoC
             return services;
         }
 
-        public static void RegistrarHangfire(this IServiceCollection services)
-        {
-            services.AddHangfire(configuration =>
-            {
-                IGlobalConfiguration<AutomaticRetryAttribute> globalConfiguration = configuration
-                                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                                    .UseSimpleAssemblyNameTypeSerializer()
-                                    .UseRecommendedSerializerSettings(settings => settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
-                                    .UseFilter(new AutomaticRetryAttribute { Attempts = 2 });
-                globalConfiguration
-                .UseInMemoryStorage();
-            });
-
-            services.AddHangfireServer();
-        }
-
         private static void RegistrarSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
@@ -111,9 +89,7 @@ namespace API.Application.IoC
                 //permite insertar el token por el SaggerUI
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = @"JWT cabecera de Authorizacion usando el esquema Bearer. 
-                                    Inserte 'Bearer' [espacio] y luego el token en el campo de texto de abajo.
-                                    Ejemplo: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluLnN5c3RlbSIsImp0aSI6IjI1NWYyNDU4LTliMjktNDgwZC1iMWY5LWQ3OWRkODhkOTA2NSIsImdlc3Rpb25hciB1c3VhcmlvcyI6Imdlc3Rpb25hciB1c3VhcmlvcyIsImxpc3RhciByb2xlcyI6Imxpc3RhciByb2xlcyIsImxpc3RhciB1c3VhcmlvcyI6Imxpc3RhciB1c3VhcmlvcyIsImdlc3Rpb25hciByb2wiOiJnZXN0aW9uYXIgcm9sIiwiZXhwIjoxOTU5NzQ4NDQxLCJpc3MiOiJBcGlTeXN0ZW0iLCJhdWQiOiJBcGlTeXN0ZW0ifQ.POxB0z7od3VhU0lYAfY6X0_6ruQtDwrRUwncqUBCZ7A'",
+                    Description = @"Inserte el token en el campo de texto.'",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
@@ -155,7 +131,6 @@ namespace API.Application.IoC
 
             app.MapControllers();
 
-            app.UseHangfireDashboard();
 
             app.Run();
 
@@ -184,7 +159,6 @@ namespace API.Application.IoC
 
         public static IServiceCollection RegistrarServiciosDominio(this IServiceCollection services)
         {
-            services.AddScoped<IAutenticacionService, AutenticacionService>();
             services.AddScoped<IPermisoService, PermisoService>();
             services.AddScoped<IRolPermisoService, RolPermisoService>();
             services.AddScoped<IRolService, RolService>();
@@ -193,6 +167,7 @@ namespace API.Application.IoC
 
             return services;
         }
+
         private static void RegistrarAutenticacion(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication("AuthKey")
@@ -211,7 +186,7 @@ namespace API.Application.IoC
                         {
                             ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
                         };
-                    });       
+                    });
         }
 
         private static void ConfigurarLog4Net()

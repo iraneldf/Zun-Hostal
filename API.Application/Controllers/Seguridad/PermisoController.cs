@@ -3,11 +3,9 @@ using API.Application.Filters;
 using API.Data.Entidades.Seguridad;
 using API.Domain.Exceptions;
 using API.Domain.Interfaces.Seguridad;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net;
 
 namespace API.Application.Controllers.Seguridad
 {
