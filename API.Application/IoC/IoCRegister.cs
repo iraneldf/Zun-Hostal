@@ -1,4 +1,5 @@
 ﻿using API.Application.Mapper;
+using API.Application.Services;
 using API.Data.DbContexts;
 using API.Data.Entidades;
 using API.Data.IUnitOfWorks;
@@ -61,6 +62,10 @@ namespace API.Application.IoC
                     builder.AllowAnyMethod();
                 });
             });
+
+            //Add services to Hosting
+            services.AddWindowsService();
+            services.AddHostedService<WindowService>();
 
             //Add services to validation
 

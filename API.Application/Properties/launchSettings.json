@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SecretKey": "APSKP3KP4234KP2423K4as5r54ewwT5H5df12f15HG5h1g51hads6G6e16h16ryj1t61561h51vb51n8tyj51g5fn1f6P234K2P34K23P4K234K23423K42P35r1g5e15151rr2r15r1rr5"
       },
-      "applicationUrl": "https://localhost:7208;http://localhost:5208",
+      "applicationUrl": "https://localhost:6009;http://localhost:6008",
       "dotnetRunMessages": true
     },
     "IIS Express": {
