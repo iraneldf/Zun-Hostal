@@ -10,7 +10,6 @@ using API.Domain.Services;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace API.Test.Tests
 {
@@ -48,7 +47,7 @@ namespace API.Test.Tests
             return null;
         }
 
-       
+
         private async Task DbInitialize()
         {
             //adding API in DB

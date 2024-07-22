@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Zun.Aplicacion.Controllers
+namespace API.Application.Controllers
 {
     [Route("/")]
     public class HomeController : Controller
@@ -13,7 +13,7 @@ namespace Zun.Aplicacion.Controllers
                 string html = await System.IO.File.ReadAllTextAsync("wwwroot/index.html");
                 return base.Content(html, "text/html");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //_logger.ErrorFormat("Unhandled exception get html admin: {0}. {1}", e.Message, e.StackTrace);
                 return base.Content("<h6 style=\"color:red\">An unexpected error occurred</h6>", "text/html"); ;
