@@ -136,6 +136,7 @@ namespace API.Application.IoC
 
             app.MapControllers();
 
+            app.UseCors("AllowAnyCorsPolicy");
 
             app.Run();
 
