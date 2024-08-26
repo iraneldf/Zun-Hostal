@@ -8,7 +8,7 @@ namespace API.Data.ConfiguracionEntidades.Seguridad
         public static void SetEntityBuilder(ModelBuilder modelBuilder)
         {
             #region Configurando Entity
-            modelBuilder.Entity<Traza>().ToTable("Trazas");
+            modelBuilder.Entity<Traza>().ToTable("PonerNombreSistema");
             EntidadBaseConfiguracionBD<Traza>.SetEntityBuilder(modelBuilder);
 
             modelBuilder.Entity<Traza>().Property(e => e.Descripcion).IsRequired();

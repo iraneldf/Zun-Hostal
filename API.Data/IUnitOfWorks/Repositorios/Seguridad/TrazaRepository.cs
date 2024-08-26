@@ -6,16 +6,16 @@ namespace API.Data.IUnitOfWorks.Repositorios.Seguridad
 {
     public class TrazaRepository : ITrazaRepository
     {
-        protected readonly ApiDbContext _context;
-        public TrazaRepository(ApiDbContext context)
+        protected readonly TrazasDbContext _trazasContext;
+        public TrazaRepository(TrazasDbContext trazasContext)
         {
-            _context = context;
+            _trazasContext = trazasContext;
         }
 
         public virtual async Task Crear(Traza traza)
         {
-            await _context.AddAsync(traza);
-            await _context.SaveChangesAsync();
+            await _trazasContext.AddAsync(traza);
+            await _trazasContext.SaveChangesAsync();
         }
     }
 }

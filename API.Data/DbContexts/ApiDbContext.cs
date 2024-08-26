@@ -10,7 +10,6 @@ namespace API.Data.DbContexts
         public DbSet<RolPermiso> RolPermiso { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Traza> Trazas { get; set; }
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options)
             : base(options)
@@ -23,7 +22,6 @@ namespace API.Data.DbContexts
             RolConfiguracionBD.SetEntityBuilder(modelBuilder);
             PermisoConfiguracionBD.SetEntityBuilder(modelBuilder);
             UsuarioConfiguracionBD.SetEntityBuilder(modelBuilder);
-            TrazaConfiguracionBD.SetEntityBuilder(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -15,7 +15,7 @@ namespace API.Application.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ExceptionManagerFilter))]
-    [Authorize]
+  //  [Authorize]
     public class BasicController<TEntity, TEntityValidator, TEntityDto, CrearDto, ActualizarDto, ElementoListadoPaginadoDto, FiltrarConfigurarListadoPaginadoDto> : ControllerBase where TEntity : EntidadBase where TEntityValidator : AbstractValidator<TEntity> where TEntityDto : EntidadBaseDto where ActualizarDto : EntidadBaseDto where FiltrarConfigurarListadoPaginadoDto : ConfiguracionListadoPaginadoDto
     {
         protected string? usuario;

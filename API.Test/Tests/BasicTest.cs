@@ -16,6 +16,7 @@ namespace API.Test.Tests
     public class BasicTest<TEntity, TEntityValidator> where TEntity : EntidadBase where TEntityValidator : AbstractValidator<TEntity>
     {
         private readonly ApiDbContext _context;
+        private readonly TrazasDbContext _trazasContext;
         protected readonly IMapper _mapper;
         protected readonly IBaseService<TEntity, TEntityValidator> _basicService;
         protected readonly IUnitOfWork<TEntity> _repositories;
@@ -25,9 +26,10 @@ namespace API.Test.Tests
         {
             _mapper = ConfigureAutoMapper();
             _context = DbContextBuild();
+            _trazasContext = DbTrazasContextBuild();
 
-            _basicService = new BasicService<TEntity, TEntityValidator>(new UnitOfWork<TEntity>(_context), null);
-            _repositories = new UnitOfWork<TEntity>(_context);
+            _basicService = new BasicService<TEntity, TEntityValidator>(new UnitOfWork<TEntity>(_context, _trazasContext), null);
+            _repositories = new UnitOfWork<TEntity>(_context, _trazasContext);
             _basicRepository = new BaseRepository<TEntity>(_context);
             DbInitialize().GetAwaiter();
         }
@@ -41,6 +43,12 @@ namespace API.Test.Tests
         }
 
         private ApiDbContext DbContextBuild()
+        {
+            //configurar esto
+
+            return null;
+        }
+        private TrazasDbContext DbTrazasContextBuild()
         {
             //configurar esto
 

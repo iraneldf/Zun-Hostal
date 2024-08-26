@@ -148,14 +148,21 @@ namespace API.Application.IoC
             string databaseType = configuration["DatabaseType"] ?? "MSSqlServer";
 
             if (databaseType == "MSSqlServer")
+            {
                 services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("APIContext")));
+                services.AddDbContext<TrazasDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("TrazasContext")));
+            }
             else if (databaseType == "MySqlServer")
+            {
                 services.AddDbContext<ApiDbContext>(options => options.UseMySql(configuration.GetConnectionString("APIContext"), ServerVersion.AutoDetect(configuration.GetConnectionString("APIContext"))));
-
+                services.AddDbContext<TrazasDbContext>(options => options.UseMySql(configuration.GetConnectionString("TrazasContext"), ServerVersion.AutoDetect(configuration.GetConnectionString("TrazasContext"))));
+            }
             services.AddTransient<IApiDbContext, ApiDbContext>();
+            services.AddTransient<ITrazasDbContext, TrazasDbContext>();
 
             //Aplica las migraciones pendientes. Crea la base datos si no existe.     
             services.BuildServiceProvider().GetRequiredService<ApiDbContext>().Database.Migrate();
+            services.BuildServiceProvider().GetRequiredService<TrazasDbContext>().Database.Migrate();
 
             return services;
         }

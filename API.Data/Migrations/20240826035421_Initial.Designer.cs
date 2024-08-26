@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240629031826_AgregadoRolPermiso")]
-    partial class AgregadoRolPermiso
+    [Migration("20240826035421_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,8 +69,8 @@ namespace API.Data.Migrations
                             ActualizadoPor = "",
                             CreadoPor = "",
                             Descripcion = "Permite ver los usuarios existentes en el sistema y sus datos.",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7038),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7030),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Listar usuarios"
                         },
                         new
@@ -79,8 +79,8 @@ namespace API.Data.Migrations
                             ActualizadoPor = "",
                             CreadoPor = "",
                             Descripcion = "Permite ver, crear, modificar y eliminar usuarios en el sistema.",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7067),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7058),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Gestionar usuarios"
                         },
                         new
@@ -89,8 +89,8 @@ namespace API.Data.Migrations
                             ActualizadoPor = "",
                             CreadoPor = "",
                             Descripcion = "Permite ver los roles existentes en el sistema y sus datos.",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7086),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7083),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Listar roles"
                         },
                         new
@@ -99,8 +99,8 @@ namespace API.Data.Migrations
                             ActualizadoPor = "",
                             CreadoPor = "",
                             Descripcion = "Permite ver, crear, modificar y eliminar roles en el sistema.",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7094),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7091),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Gestionar rol"
                         });
                 });
@@ -143,8 +143,8 @@ namespace API.Data.Migrations
                             Id = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522"),
                             ActualizadoPor = "",
                             CreadoPor = "",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(6759),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(6702),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Administrador"
                         });
                 });
@@ -193,8 +193,8 @@ namespace API.Data.Migrations
                             Id = new Guid("56b3924b-209b-40fb-9f31-ad75c12f4528"),
                             ActualizadoPor = "",
                             CreadoPor = "",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7383),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7375),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PermisoId = new Guid("56b3924b-209b-40fb-9f31-ad75c12f4528"),
                             RolId = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522")
                         },
@@ -203,8 +203,8 @@ namespace API.Data.Migrations
                             Id = new Guid("4129cf49-cc22-46a1-9625-501855f2da8b"),
                             ActualizadoPor = "",
                             CreadoPor = "",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7396),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7394),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PermisoId = new Guid("4129cf49-cc22-46a1-9625-501855f2da8b"),
                             RolId = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522")
                         },
@@ -213,8 +213,8 @@ namespace API.Data.Migrations
                             Id = new Guid("e36d283c-8b25-42b6-83bd-56edd953e770"),
                             ActualizadoPor = "",
                             CreadoPor = "",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7417),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7401),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PermisoId = new Guid("e36d283c-8b25-42b6-83bd-56edd953e770"),
                             RolId = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522")
                         },
@@ -223,48 +223,11 @@ namespace API.Data.Migrations
                             Id = new Guid("90abf232-a641-478d-8720-f0ae49e8a306"),
                             ActualizadoPor = "",
                             CreadoPor = "",
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7425),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 102, DateTimeKind.Local).AddTicks(7423),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PermisoId = new Guid("90abf232-a641-478d-8720-f0ae49e8a306"),
                             RolId = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522")
                         });
-                });
-
-            modelBuilder.Entity("API.Data.Entidades.Seguridad.Traza", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActualizadoPor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreadoPor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaActualizado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaCreado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TablaBD")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("Trazas", (string)null);
                 });
 
             modelBuilder.Entity("API.Data.Entidades.Seguridad.Usuario", b =>
@@ -343,8 +306,8 @@ namespace API.Data.Migrations
                             Correo = "admin.system@api.cu",
                             CreadoPor = "",
                             DebeCambiarContrasenna = false,
-                            FechaActualizado = new DateTime(2024, 6, 28, 23, 18, 26, 103, DateTimeKind.Local).AddTicks(5331),
-                            FechaCreado = new DateTime(2024, 6, 28, 23, 18, 26, 103, DateTimeKind.Local).AddTicks(5311),
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Admin",
                             RolId = new Guid("c0b7e3b3-a06e-4580-b985-bb2fc4336522"),
                             Username = "admin.system"

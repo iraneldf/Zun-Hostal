@@ -13,5 +13,6 @@ namespace API.Data.IUnitOfWorks.Interfaces
         ITrazaRepository Trazas { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<int> SaveTrazasChangesAsync(CancellationToken cancellationToken = default);
     }
 }

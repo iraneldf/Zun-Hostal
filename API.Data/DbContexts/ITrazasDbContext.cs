@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.DbContexts
 {
-    public interface IApiDbContext
+    public interface ITrazasDbContext
     {
         #region Entities
 
-        DbSet<Usuario> Usuarios { get; set; }
+        DbSet<Traza> Trazas { get; set; }
 
         #endregion
     }
