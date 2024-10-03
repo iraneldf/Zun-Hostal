@@ -22,11 +22,11 @@ namespace API.Application.Controllers
         protected readonly IMapper _mapper;
         protected readonly IBaseService<TEntity, TEntityValidator> _servicioBase;
 
-        public BasicController(IMapper mapper, IBaseService<TEntity, TEntityValidator> servicioBase)
+        public BasicController(IMapper mapper, IBaseService<TEntity, TEntityValidator> servicioBase, IHttpContextAccessor httpContext)
         {
             _servicioBase = servicioBase;
             _mapper = mapper;
-            usuario = User?.Identity?.Name;
+            usuario = httpContext.HttpContext?.User?.Identity?.Name;
         }
 
 

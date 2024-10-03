@@ -16,7 +16,7 @@ namespace API.Application.Controllers.Seguridad
     public class UsuarioController : BasicController<Usuario, UsuarioValidator, DetallesUsuarioDto, CrearUsuarioInputDto, ActualizarUsuarioInputDto, ListadoPaginadoUsuarioDto, FiltrarConfigurarListadoPaginadoUsuarioIntputDto>
     {
 
-        public UsuarioController(IMapper mapper, IUsuarioService servicioUsuario) : base(mapper, servicioUsuario)
+        public UsuarioController(IMapper mapper, IUsuarioService servicioUsuario, IHttpContextAccessor httpContext) : base(mapper, servicioUsuario, httpContext)
         {
         }
 

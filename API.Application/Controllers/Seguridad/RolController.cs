@@ -15,7 +15,7 @@ namespace API.Application.Controllers.Seguridad
     {
         private readonly IRolPermisoService _rolPermisoService;
 
-        public RolController(IMapper mapper, IRolService servicioRol, IRolPermisoService rolPermisoService) : base(mapper, servicioRol)
+        public RolController(IMapper mapper, IRolService servicioRol, IRolPermisoService rolPermisoService, IHttpContextAccessor httpContext) : base(mapper, servicioRol, httpContext)
         {
             _rolPermisoService = rolPermisoService;
         }
