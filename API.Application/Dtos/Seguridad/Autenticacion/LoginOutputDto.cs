@@ -1,8 +1,7 @@
-﻿namespace API.Application.Dtos.Seguridad.Autenticacion
+﻿namespace API.Application.Dtos.Seguridad.Autenticacion;
+
+public class LoginOutputDto
 {
-    public class LoginOutputDto
-    {
-        public required string Token { get; set; }
-        public DateTime FechaExpiracion { get; set; }
-    }
+    public required string Token { get; set; }
+    public DateTime FechaExpiracion { get; set; }
 }

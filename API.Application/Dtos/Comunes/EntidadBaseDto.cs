@@ -1,7 +1,6 @@
-﻿namespace API.Application.Dtos.Comunes
+﻿namespace API.Application.Dtos.Comunes;
+
+public class EntidadBaseDto
 {
-    public class EntidadBaseDto
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

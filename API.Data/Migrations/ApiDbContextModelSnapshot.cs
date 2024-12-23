@@ -22,6 +22,566 @@ namespace API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("API.Data.Entidades.Hostal.AmaDeLlave", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualizadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CI")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AmaDeLlaves", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b564f928-38fd-4380-9b0d-1178efa12993"),
+                            ActualizadoPor = "",
+                            Apellido = "López",
+                            CI = "12323434456",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Ana",
+                            Telefono = "234325231110"
+                        },
+                        new
+                        {
+                            Id = new Guid("691f6e6c-c66f-468a-bf2f-a95a96afd522"),
+                            ActualizadoPor = "",
+                            Apellido = "Rodríguez",
+                            CI = "12323433456",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Carlos",
+                            Telefono = "234234532520"
+                        },
+                        new
+                        {
+                            Id = new Guid("94c82e18-d0ce-4275-8b75-b0b4efbf8531"),
+                            ActualizadoPor = "",
+                            Apellido = "Fernández",
+                            CI = "12323424456",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "María",
+                            Telefono = "234343252300"
+                        },
+                        new
+                        {
+                            Id = new Guid("d3a53cfa-45c2-4a21-abc0-d079ee921740"),
+                            ActualizadoPor = "",
+                            Apellido = "Sánchez",
+                            CI = "12323414456",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Pedro",
+                            Telefono = "234325552323"
+                        },
+                        new
+                        {
+                            Id = new Guid("fb1a498b-5b46-44a7-bb45-428889157e69"),
+                            ActualizadoPor = "",
+                            Apellido = "Martínez",
+                            CI = "12323474456",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Lucía",
+                            Telefono = "234325232352"
+                        });
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.AmaDeLlaveHabitacion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualizadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("AmaDeLlaveId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HabitacionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmaDeLlaveId");
+
+                    b.HasIndex("HabitacionId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AmaDeLlaveHabitaciones", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4936a664-d031-427f-9c19-f20cb1c5a338"),
+                            ActualizadoPor = "",
+                            AmaDeLlaveId = new Guid("b564f928-38fd-4380-9b0d-1178efa12993"),
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HabitacionId = new Guid("37cc1706-c8f0-4624-9344-6526500b5ae4")
+                        },
+                        new
+                        {
+                            Id = new Guid("416224b3-4845-4b08-889b-3bbc45211d58"),
+                            ActualizadoPor = "",
+                            AmaDeLlaveId = new Guid("b564f928-38fd-4380-9b0d-1178efa12993"),
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HabitacionId = new Guid("a2426593-2ff5-450d-bfbf-0e87e550da31")
+                        },
+                        new
+                        {
+                            Id = new Guid("c47d4b39-29ee-49c6-a859-ed2a72bd11e0"),
+                            ActualizadoPor = "",
+                            AmaDeLlaveId = new Guid("94c82e18-d0ce-4275-8b75-b0b4efbf8531"),
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HabitacionId = new Guid("5cc7295e-398f-4703-99cd-efa68e37e59c")
+                        },
+                        new
+                        {
+                            Id = new Guid("7fe6eaca-9eeb-4bfe-8cfc-ff307bd942b6"),
+                            ActualizadoPor = "",
+                            AmaDeLlaveId = new Guid("d3a53cfa-45c2-4a21-abc0-d079ee921740"),
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HabitacionId = new Guid("5cc7295e-398f-4703-99cd-efa68e37e59c")
+                        },
+                        new
+                        {
+                            Id = new Guid("262021fb-5c8c-4968-98d0-bb2039a0b659"),
+                            ActualizadoPor = "",
+                            AmaDeLlaveId = new Guid("fb1a498b-5b46-44a7-bb45-428889157e69"),
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HabitacionId = new Guid("be825014-0205-44a8-b99c-d127ff29d41d")
+                        });
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Cliente", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualizadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Apellidos")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CI")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("CreadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<bool>("VIP")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CI")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Telefono")
+                        .IsUnique();
+
+                    b.HasIndex("Nombre", "Apellidos")
+                        .IsUnique();
+
+                    b.ToTable("Clientes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c0ac798b-ffbb-4505-b20c-8d35fc147eb9"),
+                            ActualizadoPor = "",
+                            Apellidos = "Pérez",
+                            CI = "12345678901",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Juan",
+                            Telefono = "5551234",
+                            VIP = false
+                        },
+                        new
+                        {
+                            Id = new Guid("9dedfb3a-3d99-4326-bfa1-0a9c99fd5161"),
+                            ActualizadoPor = "",
+                            Apellidos = "Gómez",
+                            CI = "23456789012",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "María",
+                            Telefono = "5555678",
+                            VIP = true
+                        },
+                        new
+                        {
+                            Id = new Guid("60e2fc5f-d1fc-41dc-b8fa-3ec20919e328"),
+                            ActualizadoPor = "",
+                            Apellidos = "Martínez",
+                            CI = "34567890123",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Luis",
+                            Telefono = "5558765",
+                            VIP = false
+                        },
+                        new
+                        {
+                            Id = new Guid("0a73896c-4e9a-4d8f-a971-84ecf347c857"),
+                            ActualizadoPor = "",
+                            Apellidos = "López",
+                            CI = "45678901234",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Ana",
+                            Telefono = "5554321",
+                            VIP = false
+                        },
+                        new
+                        {
+                            Id = new Guid("e7e48052-17c6-47c6-b539-04a5e055d646"),
+                            ActualizadoPor = "",
+                            Apellidos = "Rodríguez",
+                            CI = "56789012345",
+                            CreadoPor = "",
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Carlos",
+                            Telefono = "5559876",
+                            VIP = true
+                        });
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Habitacion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualizadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Habitaciones", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("37cc1706-c8f0-4624-9344-6526500b5ae4"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "011"
+                        },
+                        new
+                        {
+                            Id = new Guid("a2426593-2ff5-450d-bfbf-0e87e550da31"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "012"
+                        },
+                        new
+                        {
+                            Id = new Guid("5cc7295e-398f-4703-99cd-efa68e37e59c"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "013"
+                        },
+                        new
+                        {
+                            Id = new Guid("1475bae2-ba38-410c-ade9-1d110eed3804"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "014"
+                        },
+                        new
+                        {
+                            Id = new Guid("be825014-0205-44a8-b99c-d127ff29d41d"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "015"
+                        },
+                        new
+                        {
+                            Id = new Guid("4a6e5e92-67d6-42e1-8a49-f1163053117d"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "021"
+                        },
+                        new
+                        {
+                            Id = new Guid("dd28434e-feb7-4d90-b05c-65279590ec28"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "022"
+                        },
+                        new
+                        {
+                            Id = new Guid("5dac0c9c-392e-4610-ad46-dfae5c9e0da8"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "023"
+                        },
+                        new
+                        {
+                            Id = new Guid("385d605f-b4af-4cbd-907f-b2fe76cce1e3"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "024"
+                        },
+                        new
+                        {
+                            Id = new Guid("4b49a231-8a6e-4db9-a273-93d2d19c1a42"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "025"
+                        },
+                        new
+                        {
+                            Id = new Guid("fbd4f225-313d-4f8f-afb4-d9f14b9a809c"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "031"
+                        },
+                        new
+                        {
+                            Id = new Guid("0cc18ef4-c366-4da6-b803-be5243359308"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "032"
+                        },
+                        new
+                        {
+                            Id = new Guid("86bbf2ba-8993-4ea1-8ad3-1a7cc046f744"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "033"
+                        },
+                        new
+                        {
+                            Id = new Guid("5a9c3993-4cd0-4050-898b-8d3327c338c6"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "034"
+                        },
+                        new
+                        {
+                            Id = new Guid("96df2e3c-2cb8-4a62-9e0a-72fd8cc1b192"),
+                            ActualizadoPor = "",
+                            CreadoPor = "",
+                            Estado = 0,
+                            FechaActualizado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FechaCreado = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Numero = "035"
+                        });
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Reserva", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualizadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ClienteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreadoPor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaEntrada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaSalida")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HabitacionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Importe")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("LlegadaCliente")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("HabitacionId")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Reservas", (string)null);
+                });
+
             modelBuilder.Entity("API.Data.Entidades.Seguridad.Permiso", b =>
                 {
                     b.Property<Guid>("Id")
@@ -311,6 +871,44 @@ namespace API.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("API.Data.Entidades.Hostal.AmaDeLlaveHabitacion", b =>
+                {
+                    b.HasOne("API.Data.Entidades.Hostal.AmaDeLlave", "AmaDeLlave")
+                        .WithMany("AmaDeLlaveHabitaciones")
+                        .HasForeignKey("AmaDeLlaveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Data.Entidades.Hostal.Habitacion", "Habitacion")
+                        .WithMany("AmaDeLlaveHabitaciones")
+                        .HasForeignKey("HabitacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AmaDeLlave");
+
+                    b.Navigation("Habitacion");
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Reserva", b =>
+                {
+                    b.HasOne("API.Data.Entidades.Hostal.Cliente", "Cliente")
+                        .WithMany("Reservas")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Data.Entidades.Hostal.Habitacion", "Habitacion")
+                        .WithOne("Reserva")
+                        .HasForeignKey("API.Data.Entidades.Hostal.Reserva", "HabitacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Habitacion");
+                });
+
             modelBuilder.Entity("API.Data.Entidades.Seguridad.RolPermiso", b =>
                 {
                     b.HasOne("API.Data.Entidades.Seguridad.Permiso", "Permiso")
@@ -339,6 +937,24 @@ namespace API.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.AmaDeLlave", b =>
+                {
+                    b.Navigation("AmaDeLlaveHabitaciones");
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Cliente", b =>
+                {
+                    b.Navigation("Reservas");
+                });
+
+            modelBuilder.Entity("API.Data.Entidades.Hostal.Habitacion", b =>
+                {
+                    b.Navigation("AmaDeLlaveHabitaciones");
+
+                    b.Navigation("Reserva")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Data.Entidades.Seguridad.Permiso", b =>

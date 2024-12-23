@@ -2,21 +2,18 @@
 using API.Data.Entidades.Seguridad;
 using AutoMapper;
 
-namespace API.Application.Mapper.Seguridad
-{
-    public class PermisoDtoProfile : Profile
-    {
-        public PermisoDtoProfile()
-        {
-            MapPermisoDto();
-        }
+namespace API.Application.Mapper.Seguridad;
 
-        public void MapPermisoDto()
-        {
-            CreateMap<Permiso, PermisoDto>()
-                .ReverseMap();
-        }
+public class PermisoDtoProfile : Profile
+{
+    public PermisoDtoProfile()
+    {
+        MapPermisoDto();
+    }
+
+    public void MapPermisoDto()
+    {
+        CreateMap<Permiso, PermisoDto>()
+            .ReverseMap();
     }
 }
-
-

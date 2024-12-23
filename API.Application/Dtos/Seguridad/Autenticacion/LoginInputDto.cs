@@ -1,8 +1,7 @@
-﻿namespace API.Application.Dtos.Seguridad.Autenticacion
+﻿namespace API.Application.Dtos.Seguridad.Autenticacion;
+
+public class LoginInputDto
 {
-    public class LoginInputDto
-    {
-        public required string Username { get; set; }
-        public required string Contrasenna { get; set; }
-    }
+    public required string Username { get; set; }
+    public required string Contrasenna { get; set; }
 }

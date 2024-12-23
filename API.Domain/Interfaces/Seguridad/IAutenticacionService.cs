@@ -1,8 +1,7 @@
-﻿namespace API.Domain.Interfaces.Seguridad
+﻿namespace API.Domain.Interfaces.Seguridad;
+
+public interface IAutenticacionService
 {
-    public interface IAutenticacionService
-    {
-        Task<(string, DateTime)> ConstruirToken(string username);
-        Task<bool> Login(string userName, string contrasenna);
-    }
+    Task<(string, DateTime)> ConstruirToken(string username);
+    Task<bool> Login(string userName, string contrasenna);
 }

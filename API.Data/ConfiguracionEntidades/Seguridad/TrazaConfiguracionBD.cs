@@ -1,20 +1,20 @@
 ﻿using API.Data.Entidades.Seguridad;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data.ConfiguracionEntidades.Seguridad
+namespace API.Data.ConfiguracionEntidades.Seguridad;
+
+public class TrazaConfiguracionBD
 {
-    public class TrazaConfiguracionBD
+    public static void SetEntityBuilder(ModelBuilder modelBuilder)
     {
-        public static void SetEntityBuilder(ModelBuilder modelBuilder)
-        {
-            #region Configurando Entity
-            modelBuilder.Entity<Traza>().ToTable("PonerNombreSistema");
-            EntidadBaseConfiguracionBD<Traza>.SetEntityBuilder(modelBuilder);
+        #region Configurando Entity
 
-            modelBuilder.Entity<Traza>().Property(e => e.Descripcion).IsRequired();
-            modelBuilder.Entity<Traza>().Property(e => e.TablaBD).HasMaxLength(100).IsRequired();
+        modelBuilder.Entity<Traza>().ToTable("PonerNombreSistema");
+        EntidadBaseConfiguracionBD<Traza>.SetEntityBuilder(modelBuilder);
 
-            #endregion
-        }
+        modelBuilder.Entity<Traza>().Property(e => e.Descripcion).IsRequired();
+        modelBuilder.Entity<Traza>().Property(e => e.TablaBD).HasMaxLength(100).IsRequired();
+
+        #endregion
     }
 }

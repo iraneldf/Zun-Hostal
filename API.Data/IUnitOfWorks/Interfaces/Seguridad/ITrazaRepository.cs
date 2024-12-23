@@ -1,9 +1,8 @@
 ﻿using API.Data.Entidades.Seguridad;
 
-namespace API.Data.IUnitOfWorks.Interfaces.Seguridad
+namespace API.Data.IUnitOfWorks.Interfaces.Seguridad;
+
+public interface ITrazaRepository
 {
-    public interface ITrazaRepository
-    {
-        Task Crear(Traza traza);
-    }
+    Task Crear(Traza traza);
 }

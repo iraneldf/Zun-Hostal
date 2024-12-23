@@ -1,14 +1,13 @@
 ﻿using API.Data.Entidades.Seguridad;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data.DbContexts
+namespace API.Data.DbContexts;
+
+public interface IApiDbContext
 {
-    public interface IApiDbContext
-    {
-        #region Entities
+    #region Entities
 
-        DbSet<Usuario> Usuarios { get; set; }
+    DbSet<Usuario> Usuarios { get; set; }
 
-        #endregion
-    }
+    #endregion
 }

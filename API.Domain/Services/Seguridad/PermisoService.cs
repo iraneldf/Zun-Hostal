@@ -4,13 +4,12 @@ using API.Domain.Interfaces.Seguridad;
 using API.Domain.Validators.Seguridad;
 using Microsoft.AspNetCore.Http;
 
-namespace API.Domain.Services.Seguridad
-{
-    public class PermisoService : BasicService<Permiso, PermisoValidator>, IPermisoService
-    {
+namespace API.Domain.Services.Seguridad;
 
-        public PermisoService(IUnitOfWork<Permiso> repositorios, IHttpContextAccessor httpContext) : base(repositorios, httpContext)
-        {
-        }
+public class PermisoService : BasicService<Permiso, PermisoValidator>, IPermisoService
+{
+    public PermisoService(IUnitOfWork<Permiso> repositorios, IHttpContextAccessor httpContext) : base(repositorios,
+        httpContext)
+    {
     }
 }

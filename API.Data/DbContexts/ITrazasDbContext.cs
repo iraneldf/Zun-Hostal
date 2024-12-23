@@ -1,14 +1,13 @@
 ﻿using API.Data.Entidades.Seguridad;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data.DbContexts
+namespace API.Data.DbContexts;
+
+public interface ITrazasDbContext
 {
-    public interface ITrazasDbContext
-    {
-        #region Entities
+    #region Entities
 
-        DbSet<Traza> Trazas { get; set; }
+    DbSet<Traza> Trazas { get; set; }
 
-        #endregion
-    }
+    #endregion
 }

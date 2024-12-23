@@ -1,45 +1,40 @@
-﻿using System;
+﻿#nullable disable
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
+namespace API.Data.Migrations.TrazasDb;
 
-namespace API.Data.Migrations.TrazasDb
+/// <inheritdoc />
+public partial class Initial : Migration
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
-                name: "PonerNombreSistema",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TablaBD = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    FechaCreado = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreadoPor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaActualizado = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ActualizadoPor = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PonerNombreSistema", x => x.Id);
-                });
+        migrationBuilder.CreateTable(
+            "PonerNombreSistema",
+            table => new
+            {
+                Id = table.Column<Guid>("uniqueidentifier", nullable: false),
+                Descripcion = table.Column<string>("nvarchar(max)", nullable: false),
+                TablaBD = table.Column<string>("nvarchar(100)", maxLength: 100, nullable: false),
+                FechaCreado = table.Column<DateTime>("datetime2", nullable: false),
+                CreadoPor = table.Column<string>("nvarchar(max)", nullable: false),
+                FechaActualizado = table.Column<DateTime>("datetime2", nullable: false),
+                ActualizadoPor = table.Column<string>("nvarchar(max)", nullable: false)
+            },
+            constraints: table => { table.PrimaryKey("PK_PonerNombreSistema", x => x.Id); });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PonerNombreSistema_Id",
-                table: "PonerNombreSistema",
-                column: "Id",
-                unique: true);
-        }
+        migrationBuilder.CreateIndex(
+            "IX_PonerNombreSistema_Id",
+            "PonerNombreSistema",
+            "Id",
+            unique: true);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "PonerNombreSistema");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable(
+            "PonerNombreSistema");
     }
 }

@@ -1,9 +1,8 @@
 ﻿using API.Application.Dtos.Comunes;
 
-namespace API.Application.Dtos.Seguridad.Rol
+namespace API.Application.Dtos.Seguridad.Rol;
+
+public class RolDto : EntidadBaseDto
 {
-    public class RolDto : EntidadBaseDto
-    {
-        public required string Nombre { get; set; }
-    }
+    public required string Nombre { get; set; }
 }

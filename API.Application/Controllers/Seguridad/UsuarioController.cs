@@ -1,4 +1,5 @@
-﻿using API.Application.Dtos.Comunes;
+﻿using System.Linq.Expressions;
+using API.Application.Dtos.Comunes;
 using API.Application.Dtos.Seguridad.Usuario;
 using API.Application.Validadotors.Seguridad;
 using API.Data.Entidades.Seguridad;
@@ -9,75 +10,92 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
-namespace API.Application.Controllers.Seguridad
+namespace API.Application.Controllers.Seguridad;
+
+public class UsuarioController : BasicController<Usuario, UsuarioValidator, DetallesUsuarioDto, CrearUsuarioInputDto,
+    ActualizarUsuarioInputDto, ListadoPaginadoUsuarioDto, FiltrarConfigurarListadoPaginadoUsuarioIntputDto>
 {
-    public class UsuarioController : BasicController<Usuario, UsuarioValidator, DetallesUsuarioDto, CrearUsuarioInputDto, ActualizarUsuarioInputDto, ListadoPaginadoUsuarioDto, FiltrarConfigurarListadoPaginadoUsuarioIntputDto>
+    public UsuarioController(IMapper mapper, IUsuarioService servicioUsuario, IHttpContextAccessor httpContext) : base(
+        mapper, servicioUsuario, httpContext)
     {
+    }
 
-        public UsuarioController(IMapper mapper, IUsuarioService servicioUsuario, IHttpContextAccessor httpContext) : base(mapper, servicioUsuario, httpContext)
+    /// <summary>
+    ///     Cambiar contraseña de un usuario
+    /// </summary>
+    /// <param name="cambiarContrasennaDto">Elemento a editar</param>
+    /// <response code="200">Completado con exito!</response>
+    /// <response code="400">Ha ocurrido un error</response>
+    /// <response code="404">Elemento no encontrado</response>
+    [HttpPost("[action]")]
+    public async Task<IActionResult> CambiarContrasenna(CambiarContrasennaInputDto cambiarContrasennaDto)
+    {
+        await new CambiarContrasennaDtoValidator().ValidateAndThrowAsync(cambiarContrasennaDto);
+
+        //si no se inserta la contraseña antigua es porque el endpoint lo esta llamando un administrador de usuarios
+        if (string.IsNullOrWhiteSpace(cambiarContrasennaDto.ContrasennaAntigua))
         {
+            _servicioBase.ValidarPermisos("gestionar");
+            await ((IUsuarioService)_servicioBase).CambiarContrasenna(cambiarContrasennaDto.UsuarioId,
+                cambiarContrasennaDto.NuevaContrasenna, true);
+        }
+        else
+        {
+            var usuario = await _servicioBase.ObtenerPorId(cambiarContrasennaDto.UsuarioId) ?? throw new CustomException
+                { Status = StatusCodes.Status404NotFound, Message = "Elemento no encontrado." };
+
+            if (User.Identity?.Name == usuario.Username)
+                throw new CustomException
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    Message = "El usuario no tiene permisos para realizar esta acción."
+                };
+
+            if (usuario.Contrasenna.GetHashCode().ToString() != cambiarContrasennaDto.ContrasennaAntigua)
+                throw new CustomException
+                {
+                    Status = StatusCodes.Status500InternalServerError, Message = "La contraseña antigua es incorrecta."
+                };
+
+            await ((IUsuarioService)_servicioBase).CambiarContrasenna(cambiarContrasennaDto.UsuarioId,
+                cambiarContrasennaDto.NuevaContrasenna);
         }
 
-        /// <summary>
-        /// Cambiar contraseña de un usuario
-        /// </summary>
-        /// <param name="cambiarContrasennaDto">Elemento a editar</param>
-        /// <response code="200">Completado con exito!</response>
-        /// <response code="400">Ha ocurrido un error</response>
-        /// <response code="404">Elemento no encontrado</response>
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CambiarContrasenna(CambiarContrasennaInputDto cambiarContrasennaDto)
-        {
-            await new CambiarContrasennaDtoValidator().ValidateAndThrowAsync(cambiarContrasennaDto);
+        await _servicioBase.GuardarTraza(usuario,
+            $"Se ha camibado la contraseña para del usuario con id = {cambiarContrasennaDto.UsuarioId}",
+            typeof(Usuario).Name);
+        await _servicioBase.SalvarCambios();
 
-            //si no se inserta la contraseña antigua es porque el endpoint lo esta llamando un administrador de usuarios
-            if (string.IsNullOrWhiteSpace(cambiarContrasennaDto.ContrasennaAntigua))
-            {
-                _servicioBase.ValidarPermisos("gestionar");
-                await ((IUsuarioService)_servicioBase).CambiarContrasenna(cambiarContrasennaDto.UsuarioId, cambiarContrasennaDto.NuevaContrasenna, true);
-            }
-            else
-            {
-                Usuario? usuario = await _servicioBase.ObtenerPorId(cambiarContrasennaDto.UsuarioId) ?? throw new CustomException { Status = StatusCodes.Status404NotFound, Message = "Elemento no encontrado." };
+        return Ok(new ResponseDto { Status = StatusCodes.Status200OK });
+    }
 
-                if (User.Identity?.Name == usuario.Username)
-                    throw new CustomException { Status = StatusCodes.Status401Unauthorized, Message = "El usuario no tiene permisos para realizar esta acción." };
+    protected override Task<(IEnumerable<Usuario>, int)> AplicarFiltrosIncluirPropiedades(
+        FiltrarConfigurarListadoPaginadoUsuarioIntputDto inputDto)
+    {
+        //agregando filtros
+        List<Expression<Func<Usuario, bool>>> filtros = new();
+        if (!string.IsNullOrEmpty(inputDto.TextoBuscar))
+            filtros.Add(usuario => usuario.Nombre.Contains(inputDto.TextoBuscar) ||
+                                   usuario.Apellidos.Contains(inputDto.TextoBuscar) ||
+                                   usuario.Correo.Contains(inputDto.TextoBuscar) ||
+                                   usuario.Username.Contains(inputDto.TextoBuscar));
 
-                if (usuario.Contrasenna.GetHashCode().ToString() != cambiarContrasennaDto.ContrasennaAntigua)
-                    throw new CustomException { Status = StatusCodes.Status500InternalServerError, Message = "La contraseña antigua es incorrecta." };
+        //IIncludableQueryable<Usuario, object> propiedadesIncluidas(IQueryable<Usuario> query) => query.Include(e => e.ShipmentItems);
 
-                await ((IUsuarioService)_servicioBase).CambiarContrasenna(cambiarContrasennaDto.UsuarioId, cambiarContrasennaDto.NuevaContrasenna);
-            }
+        return _servicioBase.ObtenerListadoPaginado(inputDto.CantidadIgnorar, inputDto.CantidadMostrar,
+            inputDto.SecuenciaOrdenamiento, null, filtros.ToArray());
+    }
 
-            await _servicioBase.GuardarTraza(usuario, $"Se ha camibado la contraseña para del usuario con id = {cambiarContrasennaDto.UsuarioId}", typeof(Usuario).Name);
-            await _servicioBase.SalvarCambios();
+    protected override async Task<Usuario?> ObtenerElementoPorId(Guid id)
+    {
+        return await _servicioBase.ObtenerPorId(id, query => query.Include(e => e.Rol));
+    }
 
-            return Ok(new ResponseDto { Status = StatusCodes.Status200OK });
-        }
-
-        protected override Task<(IEnumerable<Usuario>, int)> AplicarFiltrosIncluirPropiedades(FiltrarConfigurarListadoPaginadoUsuarioIntputDto inputDto)
-        {
-            //agregando filtros
-            List<Expression<Func<Usuario, bool>>> filtros = new();
-            if (!string.IsNullOrEmpty(inputDto.TextoBuscar))
-            {
-                filtros.Add(usuario => usuario.Nombre.Contains(inputDto.TextoBuscar) ||
-                                       usuario.Apellidos.Contains(inputDto.TextoBuscar) ||
-                                       usuario.Correo.Contains(inputDto.TextoBuscar) ||
-                                       usuario.Username.Contains(inputDto.TextoBuscar));
-            }
-
-            //IIncludableQueryable<Usuario, object> propiedadesIncluidas(IQueryable<Usuario> query) => query.Include(e => e.ShipmentItems);
-
-            return _servicioBase.ObtenerListadoPaginado(inputDto.CantidadIgnorar, inputDto.CantidadMostrar, inputDto.SecuenciaOrdenamiento, null, filtros.ToArray());
-        }
-
-        protected override async Task<Usuario?> ObtenerElementoPorId(Guid id)
-            => await _servicioBase.ObtenerPorId(id, propiedadesIncluidas: query => query.Include(e => e.Rol));
-
-        protected override async Task<IEnumerable<DetallesUsuarioDto>> ObtenerTodosElementos(string? secuenciaOrdenamiento = null)
-            => _mapper.Map<IEnumerable<DetallesUsuarioDto>>(await _servicioBase.ObtenerTodos(secuenciaOrdenamiento, propiedadesIncluidas: query => query.Include(e => e.Rol)));
+    protected override async Task<IEnumerable<DetallesUsuarioDto>> ObtenerTodosElementos(
+        string? secuenciaOrdenamiento = null)
+    {
+        return _mapper.Map<IEnumerable<DetallesUsuarioDto>>(
+            await _servicioBase.ObtenerTodos(secuenciaOrdenamiento, query => query.Include(e => e.Rol)));
     }
 }

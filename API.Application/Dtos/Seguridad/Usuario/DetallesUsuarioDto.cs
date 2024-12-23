@@ -1,7 +1,6 @@
-﻿namespace API.Application.Dtos.Seguridad.Usuario
+﻿namespace API.Application.Dtos.Seguridad.Usuario;
+
+public class DetallesUsuarioDto : UsuarioDto
 {
-    public class DetallesUsuarioDto : UsuarioDto
-    {
-        public required string Rol { get; set; }
-    }
+    public required string Rol { get; set; }
 }
