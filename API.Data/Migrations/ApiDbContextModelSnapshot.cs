@@ -573,8 +573,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.HasIndex("HabitacionId")
-                        .IsUnique();
+                    b.HasIndex("HabitacionId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -893,14 +892,14 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Data.Entidades.Hostal.Reserva", b =>
                 {
                     b.HasOne("API.Data.Entidades.Hostal.Cliente", "Cliente")
-                        .WithMany("Reservas")
+                        .WithMany()
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("API.Data.Entidades.Hostal.Habitacion", "Habitacion")
-                        .WithOne("Reserva")
-                        .HasForeignKey("API.Data.Entidades.Hostal.Reserva", "HabitacionId")
+                        .WithMany("Reservas")
+                        .HasForeignKey("HabitacionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -944,17 +943,11 @@ namespace API.Data.Migrations
                     b.Navigation("AmaDeLlaveHabitaciones");
                 });
 
-            modelBuilder.Entity("API.Data.Entidades.Hostal.Cliente", b =>
-                {
-                    b.Navigation("Reservas");
-                });
-
             modelBuilder.Entity("API.Data.Entidades.Hostal.Habitacion", b =>
                 {
                     b.Navigation("AmaDeLlaveHabitaciones");
 
-                    b.Navigation("Reserva")
-                        .IsRequired();
+                    b.Navigation("Reservas");
                 });
 
             modelBuilder.Entity("API.Data.Entidades.Seguridad.Permiso", b =>

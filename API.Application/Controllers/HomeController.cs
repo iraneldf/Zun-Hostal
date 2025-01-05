@@ -17,7 +17,6 @@ public class HomeController : Controller
         {
             //_logger.ErrorFormat("Unhandled exception get html admin: {0}. {1}", e.Message, e.StackTrace);
             return base.Content("<h6 style=\"color:red\">An unexpected error occurred</h6>", "text/html");
-            ;
         }
     }
 }

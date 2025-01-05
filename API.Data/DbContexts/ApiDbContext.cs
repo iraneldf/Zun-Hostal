@@ -30,7 +30,7 @@ public class ApiDbContext : DbContext, IApiDbContext
         PermisoConfiguracionBD.SetEntityBuilder(modelBuilder);
         UsuarioConfiguracionBD.SetEntityBuilder(modelBuilder);
         ClienteConfiguracionBD.SetEntityBuilder(modelBuilder);
-        ReservaConfiguracionBD.SetEntityBuilder(modelBuilder);
+        ReservaConfiguracionBd.SetEntityBuilder(modelBuilder);
         AmaDeLlaveConfiguracionBD.SetEntityBuilder(modelBuilder);
         HabitacionConfiguracionBD.SetEntityBuilder(modelBuilder);
         AmaDeLlaveHabitacionConfiguracionBD.SetEntityBuilder(modelBuilder);

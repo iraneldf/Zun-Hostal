@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddRegistration(configuration);
-;
 //IoCRegister.AddLogsRegistration(builder);
 
 var app = builder.Build();
