@@ -171,16 +171,11 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
             };
 
         var reservas = await _repositorios.Reserva.GetAllAsync(
-            r => r.FechaEntrada <= fecha && r.FechaSalida >= fecha);
-
-
-        if (reservas == null || !reservas.Any())
-            throw new CustomException
-            {
-                Status = StatusCodes.Status404NotFound,
-                Message = "No se encontraron reservas activas para la fecha especificada."
-            };
-
+            r => r.FechaEntrada <= fecha && r.FechaSalida >= fecha,
+            query => query
+                .Include(h => h.Cliente)
+                .Include(h => h.Habitacion)
+        );
 
         return reservas;
     }
