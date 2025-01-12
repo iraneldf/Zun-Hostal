@@ -24,6 +24,7 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
 
         //calcular importe (cant días * 10)
         reserva.Importe = await CalcularImporte(reserva);
+        reserva.FechaCreado = DateTime.Now;
 
         return await _repositorios.BasicRepository.AddAsync(EstablecerDatosAuditoria(reserva));
     }
@@ -37,24 +38,39 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
         return _repositorios.BasicRepository.Update(EstablecerDatosAuditoria(reserva, false));
     }
 
-    // todo: probar
     public override async Task ValidarAntesCrear(Reserva reserva)
     {
         await base.ValidarAntesCrear(reserva);
 
-        var condicion = await _repositorios.Reserva.AnyAsync(h =>
+        // Validar que la habitación no esté ocupada en las fechas indicadas
+        var habitacionOcupada = await _repositorios.Reserva.AnyAsync(h =>
             h.HabitacionId == reserva.HabitacionId &&
-            (h.FechaEntrada > reserva.FechaSalida || h.FechaSalida < reserva.FechaEntrada));
+            !(reserva.FechaEntrada > h.FechaSalida || reserva.FechaSalida < h.FechaEntrada));
 
-        if (!condicion)
+        if (habitacionOcupada)
         {
             throw new CustomException
             {
                 Status = StatusCodes.Status400BadRequest,
-                Message = $"La habitación {reserva.Habitacion.Numero} está ocupada en las fechas indicadas."
+                Message = "La habitación está ocupada en las fechas indicadas."
             };
         }
 
+        // Validar que el cliente no tenga otra reserva en las mismas fechas
+        var clienteConReserva = await _repositorios.Reserva.AnyAsync(r =>
+            r.ClienteId == reserva.ClienteId &&
+            !(reserva.FechaEntrada > r.FechaSalida || reserva.FechaSalida < r.FechaEntrada));
+
+        if (clienteConReserva)
+        {
+            throw new CustomException
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Message = "El cliente ya tiene una reserva en las fechas indicadas."
+            };
+        }
+
+        // Validar que las fechas sean posteriores a la fecha actual
         if (reserva.FechaSalida < DateTime.Now || reserva.FechaEntrada < DateTime.Now)
             throw new CustomException
             {
@@ -63,9 +79,7 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
                     $"La fecha de entrada y salida deben ser posteriores a la actual {DateTime.Now} > {reserva.FechaEntrada}"
             };
 
-        var diferencia = reserva.FechaSalida - reserva.FechaEntrada;
-
-
+        // Validar que la fecha de entrada sea menor que la fecha de salida
         if (reserva.FechaEntrada >= reserva.FechaSalida)
             throw new CustomException
             {
@@ -73,6 +87,8 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
                 Message = "La fecha de entrada no puede ser mayor o igual que la fecha de salida"
             };
 
+        // Validar que el período de reserva sea de al menos 3 días
+        var diferencia = reserva.FechaSalida - reserva.FechaEntrada;
         if (Math.Abs(diferencia.Days) < 2)
             throw new CustomException
             {
@@ -80,7 +96,7 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
                 Message = "El periodo mínimo para realizar la reserva es de 3 días"
             };
 
-
+        // Validar que la habitación exista y esté disponible
         var habitacion = await _repositorios.Habitacion.GetByIdAsync(reserva.HabitacionId) ??
                          throw new CustomException
                          {
@@ -92,34 +108,69 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
             throw new CustomException
             {
                 Status = StatusCodes.Status400BadRequest,
-                Message = "La habitación especificada esta fuera de servicio en estos momentos"
+                Message = "La habitación especificada está fuera de servicio en estos momentos"
             };
     }
 
     public override async Task ValidarAntesActualizar(Reserva reserva)
     {
-        /*if (reserva.FechaSalida > DateTime.Now || reserva.FechaEntrada > DateTime.Now)
+        // Verificar que la reserva exista
+        if (!await _repositorios.Reserva.AnyAsync(e => e.Id == reserva.Id))
+            throw new CustomException
+            {
+                Status = StatusCodes.Status404NotFound,
+                Message = "Elemento no encontrado."
+            };
+
+        // Validar que la habitación no esté ocupada en las fechas indicadas (excluyendo la reserva actual)
+        var habitacionOcupada = await _repositorios.Reserva.AnyAsync(h =>
+            h.HabitacionId == reserva.HabitacionId &&
+            h.Id != reserva.Id && // Excluir la reserva actual
+            !(reserva.FechaEntrada > h.FechaSalida || reserva.FechaSalida < h.FechaEntrada));
+
+        if (habitacionOcupada)
         {
             throw new CustomException
             {
                 Status = StatusCodes.Status400BadRequest,
-                Message = "La fecha de entrada y salida deben ser posteriores a la actual"
+                Message = "La habitación está ocupada en las fechas indicadas."
             };
-        }*/
+        }
 
-        if (!await _repositorios.Reserva.AnyAsync(e => e.Id == reserva.Id))
+        // Validar que el cliente no tenga otra reserva en las mismas fechas (excluyendo la reserva actual)
+        var clienteConReserva = await _repositorios.Reserva.AnyAsync(r =>
+            r.ClienteId == reserva.ClienteId &&
+            r.Id != reserva.Id && // Excluir la reserva actual
+            !(reserva.FechaEntrada > r.FechaSalida || reserva.FechaSalida < r.FechaEntrada));
+
+        if (clienteConReserva)
+        {
             throw new CustomException
-                { Status = StatusCodes.Status404NotFound, Message = "Elemento no encontrado." };
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Message = "El cliente ya tiene una reserva en las fechas indicadas."
+            };
+        }
 
-        var diferencia = reserva.FechaSalida - reserva.FechaEntrada;
+        // Validar que las fechas sean posteriores a la fecha actual
+        if (reserva.FechaSalida < DateTime.Now || reserva.FechaEntrada < DateTime.Now)
+            throw new CustomException
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Message =
+                    $"La fecha de entrada y salida deben ser posteriores a la actual {DateTime.Now} > {reserva.FechaEntrada}"
+            };
 
+        // Validar que la fecha de entrada sea menor que la fecha de salida
         if (reserva.FechaEntrada >= reserva.FechaSalida)
             throw new CustomException
             {
                 Status = StatusCodes.Status400BadRequest,
-                Message = "La fecha de entrada no puede ser menor o igual que la fecha de salida"
+                Message = "La fecha de entrada no puede ser mayor o igual que la fecha de salida"
             };
 
+        // Validar que el período de reserva sea de al menos 3 días
+        var diferencia = reserva.FechaSalida - reserva.FechaEntrada;
         if (Math.Abs(diferencia.Days) < 2)
             throw new CustomException
             {
@@ -127,6 +178,7 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
                 Message = "El periodo mínimo para realizar la reserva es de 3 días"
             };
 
+        // Validar que la habitación exista y esté disponible
         var habitacion = await _repositorios.Habitacion.GetByIdAsync(reserva.HabitacionId) ??
                          throw new CustomException
                          {
@@ -138,13 +190,11 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
             throw new CustomException
             {
                 Status = StatusCodes.Status400BadRequest,
-                Message = "La habitación especificada esta fuera de servicio en estos momentos"
+                Message = "La habitación especificada está fuera de servicio en estos momentos"
             };
 
-        //validando los datos insertados por el Rol
+        // Validar los datos insertados por el Rol
         await new ReservaValidator(_repositorios).ValidateAndThrowAsync(reserva);
-
-        //validando reglas de negocios
     }
 
     public override async Task<EntityEntry<Reserva>> Eliminar(Guid reservaId)
@@ -243,7 +293,7 @@ public sealed class ReservaService : BasicService<Reserva, ReservaValidator>, IR
             Message = "La reserva especificado no existe"
         };
 
-        reserva.LlegadaCliente = true;
+        reserva.LlegadaCliente = !reserva.LlegadaCliente;
 
         _repositorios.Reserva.Update(reserva);
 

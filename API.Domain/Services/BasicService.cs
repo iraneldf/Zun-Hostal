@@ -35,6 +35,7 @@ namespace API.Domain.Services
         public virtual async Task<EntityEntry<TEntity>> Crear(TEntity entity)
         {
             await ValidarAntesCrear(entity);
+            entity.FechaCreado = DateTime.Now;
             return await _repositorios.BasicRepository.AddAsync(EstablecerDatosAuditoria(entity));
         }
 
@@ -209,7 +210,7 @@ namespace API.Domain.Services
                     }
                 }
 
-                return queryOrdenada ?? query.OrderByDescending(e => e.Id);
+                return queryOrdenada ?? query.OrderByDescending(e => e.FechaCreado);
             }
             catch (Exception)
             {
