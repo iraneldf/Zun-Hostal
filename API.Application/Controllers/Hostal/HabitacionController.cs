@@ -67,28 +67,6 @@ public class HabitacionController : BasicReadOnlyController<Habitacion, Habitaci
     public IHabitacionService HabitacionService => _habitacionService;
 
     /// <summary>
-    ///     Poner una habitacion Fuera de Servicio
-    /// </summary>
-    /// <param name="habitacionId">HabitacionId</param>
-    /// <response code="200">Completado con exito!</response>
-    /// <response code="400">Ha ocurrido un error</response>
-    [HttpGet($"[action]")]
-    public virtual async Task<IActionResult> PonerFueraDeServicio([FromQuery] Guid habitacionId)
-    {
-        var result = await _habitacionService.PonerFuerdaDeServicio(habitacionId);
-
-        var resultDto =
-            new HabitacionDto
-            {
-                Estado = result.Estado,
-                Numero = result.Numero,
-                Id = result.Id
-            };
-
-        return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Result = resultDto });
-    }
-
-    /// <summary>
     ///     Cambia el estado de una habitacion
     /// </summary>
     /// <param name="habitacionId">HabitacionId</param>
@@ -101,7 +79,6 @@ public class HabitacionController : BasicReadOnlyController<Habitacion, Habitaci
     {
         var result = await _habitacionService.CambiarEstado(habitacionId, nevoEstado);
 
-
         var resultDto =
             new HabitacionDto
             {
@@ -109,6 +86,11 @@ public class HabitacionController : BasicReadOnlyController<Habitacion, Habitaci
                 Numero = result.Numero,
                 Id = result.Id
             };
+
+        await _servicioBase.GuardarTraza(usuario,
+            $"Se cambio el estado de la habitacion con id {habitacionId} para {nevoEstado} en la taba {nameof(Habitacion)}",
+            nameof(Habitacion));
+        await _servicioBase.SalvarCambios();
 
         return Ok(new ResponseDto { Status = StatusCodes.Status200OK, Result = resultDto });
     }

@@ -547,7 +547,13 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("EstaCancelada")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaActualizado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCancelacion")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaCreado")
@@ -568,6 +574,9 @@ namespace API.Data.Migrations
 
                     b.Property<bool>("LlegadaCliente")
                         .HasColumnType("bit");
+
+                    b.Property<string>("MotivoCancelacion")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
